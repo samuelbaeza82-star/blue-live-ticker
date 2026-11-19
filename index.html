@@ -425,7 +425,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>4:51 PM CT on Nov 18</strong>.
+          Positions are as of <strong>10:38 AM CT on Nov 19</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           The full dashboard updates every 2 hours, while this page ticks live.
         </p>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC short + realized NVDA long</div>
+        <div class="sub">$50 start + realized BTC short &amp; NVDA long + open QQQ long</div>
       </div>
     </section>
 
@@ -483,6 +483,27 @@
         <span class="s" id="to-stop">Stop $63,300</span>
       </div>
       <div id="hit-note" class="hit"></div>
+    </section>
+
+    <section class="card trade-card" id="card-qqq">
+      <div class="trade-head">
+        <div class="label">Open trade · QQQ 3x long · opened $665.10 (10:38 AM CT Nov 19)</div>
+        <div class="sub" id="qqq-src">Waiting for QQQx mark…</div>
+      </div>
+      <div id="qqq-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Unrealized, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$665.10</b></span>
+        <span>Size <b>0.15 QQQx</b></span>
+        <span>Mark <b id="qqq-mark">—</b></span>
+      </div>
+      <div class="range long" aria-hidden="true">
+        <div id="qqq-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="s" id="qqq-to-stop">Stop $661.00</span>
+        <span class="t" id="qqq-to-target">Take-profit $673.30</span>
+      </div>
     </section>
 
     <section class="card trade-card" id="card-nvda">
@@ -673,6 +694,36 @@
       }
     }
     if (!NVDA.closed) { pollNvda(); setInterval(pollNvda, 5000); }
+
+    // QQQ 3x futures long, opened 10:38 AM CT Nov 19, 2026 (practice).
+    const QQQ = { entry: 665.1, size: 0.15, stop: 661.0, target: 673.3, fee: 0.05, closed: false, exit: null, realized: 0 };
+    let qqqMark = null;
+    function qqqPnl() { if (QQQ.closed) return QQQ.realized; return qqqMark == null ? -QQQ.fee : (qqqMark - QQQ.entry) * QQQ.size - QQQ.fee; }
+    async function pollQqq() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_QQQXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        qqqMark = m;
+        const pnl = qqqPnl();
+        const el = document.getElementById("qqq-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("qqq-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("qqq-src").textContent = "Kraken QQQx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("qqq-to-stop").textContent = "Stop $661.00  ·  " + (m <= QQQ.stop ? "at stop" : "$" + (m - QQQ.stop).toFixed(2) + " away");
+        document.getElementById("qqq-to-target").textContent = "Take-profit $673.30  ·  " + (m >= QQQ.target ? "at target" : "$" + (QQQ.target - m).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - QQQ.stop) / (QQQ.target - QQQ.stop) * 100));
+        document.getElementById("qqq-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("qqq-src").textContent = "QQQ mark unavailable, retrying…";
+      }
+    }
+    if (!QQQ.closed) { pollQqq(); setInterval(pollQqq, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -955,7 +1006,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -977,9 +1028,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1000,7 +1051,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl;
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
