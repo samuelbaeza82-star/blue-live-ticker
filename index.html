@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC short + live NVDA, ETH &amp; XRP P&amp;L</div>
+        <div class="sub">$250 start + realized BTC short + realized BTC &amp; NVDA + live ETH &amp; XRP P&amp;L</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC short + live NVDA 3x long</div>
+        <div class="sub">$50 start + realized BTC short + realized NVDA long</div>
       </div>
     </section>
 
@@ -487,15 +487,15 @@
 
     <section class="card trade-card" id="card-nvda">
       <div class="trade-head">
-        <div class="label">Open trade · NVDA 3x long (futures PF_NVDAXUSD) · opened 8:45 AM CT Nov 19</div>
-        <div class="sub" id="nvda-src">Waiting for NVDA mark…</div>
+        <div class="label">Closed trade · NVDA 3x long · stopped out at $154.96 (8:59 AM CT Nov 19)</div>
+        <div class="sub" id="nvda-src">Closed · stop triggered</div>
       </div>
-      <div id="nvda-pnl" class="pnl flat">$0.00</div>
-      <div class="sub">Before exit fee (entry fee ~$0.05)</div>
+      <div id="nvda-pnl" class="pnl neg">-$1.85</div>
+      <div class="sub">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$157.88</b></span>
         <span>Size <b>0.6 NVDAx</b></span>
-        <span>Mark <b id="nvda-mark">—</b></span>
+        <span>Exit <b id="nvda-mark">$154.96</b></span>
       </div>
       <div class="range long" aria-hidden="true">
         <div id="nvda-range-mark" class="range-mark" style="left: 50%"></div>
@@ -603,7 +603,7 @@
   <script>
     // Practice positions as confirmed 4:51 PM CT, Nov 18, 2026.
     const POSITIONS = {
-      asOf: "8:45 AM CT on Nov 19",
+      asOf: "8:59 AM CT on Nov 19",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -639,9 +639,9 @@
     };
 
     // NVDA 3x futures long, opened 8:45 AM CT Nov 19, 2026 (practice).
-    const NVDA = { entry: 157.88, size: 0.6, stop: 155.9, target: 161.0 };
+    const NVDA = { entry: 157.88, size: 0.6, stop: 155.9, target: 161.0, closed: true, exit: 154.96, realized: -1.85 };
     let nvdaMark = null;
-    function nvdaPnl() { return nvdaMark == null ? 0 : (nvdaMark - NVDA.entry) * NVDA.size; }
+    function nvdaPnl() { if (NVDA.closed) return NVDA.realized; return nvdaMark == null ? 0 : (nvdaMark - NVDA.entry) * NVDA.size; }
     async function pollNvda() {
       try {
         const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_NVDAXUSD?_=" + Date.now(), { cache: "no-store" });
@@ -666,8 +666,7 @@
         document.getElementById("nvda-src").textContent = "NVDA mark unavailable, retrying…";
       }
     }
-    pollNvda();
-    setInterval(pollNvda, 5000);
+    if (!NVDA.closed) { pollNvda(); setInterval(pollNvda, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
