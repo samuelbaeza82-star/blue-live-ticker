@@ -502,7 +502,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="googl-to-target">Take-profit $278.80</span>
-        <span class="s" id="googl-to-stop">Stop $286.30</span>
+        <span class="s" id="googl-to-stop">Stop $282.80</span>
       </div>
     </section>
 
@@ -760,7 +760,7 @@
     if (!QQQ.closed) { pollQqq(); setInterval(pollQqq, 5000); }
 
     // GOOGL 3x futures short, opened 10:59 AM CT Nov 19, 2026 (practice).
-    const GOOGL = { entry: 285.40, size: 0.25, stop: 286.30, target: 278.80, fee: 0.04, closed: false, exit: null, realized: 0 };
+    const GOOGL = { entry: 285.40, size: 0.25, stop: 282.80, target: 278.80, fee: 0.04, closed: false, exit: null, realized: 0 };
     let googlMark = null;
     function googlPnl() { if (GOOGL.closed) return GOOGL.realized; return googlMark == null ? -GOOGL.fee : (GOOGL.entry - googlMark) * GOOGL.size - GOOGL.fee; }
     async function pollGoogl() {
@@ -778,7 +778,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("googl-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("googl-src").textContent = "Kraken GOOGLx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("googl-to-stop").textContent = "Stop $286.30  ·  " + (m >= GOOGL.stop ? "at stop" : "$" + (GOOGL.stop - m).toFixed(2) + " away");
+        document.getElementById("googl-to-stop").textContent = "Stop $" + GOOGL.stop.toFixed(2) + "  ·  " + (m >= GOOGL.stop ? "at stop" : "$" + (GOOGL.stop - m).toFixed(2) + " away");
         document.getElementById("googl-to-target").textContent = "Take-profit $278.80  ·  " + (m <= GOOGL.target ? "at target" : "$" + (m - GOOGL.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - GOOGL.target) / (GOOGL.stop - GOOGL.target) * 100));
         document.getElementById("googl-range-mark").style.left = pct + "%";
