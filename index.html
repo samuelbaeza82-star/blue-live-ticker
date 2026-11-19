@@ -425,7 +425,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>10:38 AM CT on Nov 19</strong>.
+          Positions are as of <strong>12:02 PM CT on Nov 19</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           The full dashboard updates every 2 hours, while this page ticks live.
         </p>
@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC, NVDA, QQQ, ETH &amp; XRP + open GOOGL</div>
+        <div class="sub">$250 start + realized BTC, NVDA, QQQ, ETH &amp; XRP + open GOOGL &amp; MSTR shorts</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC, NVDA &amp; QQQ + open GOOGL short</div>
+        <div class="sub">$50 start + realized BTC, NVDA &amp; QQQ + open GOOGL &amp; MSTR shorts</div>
       </div>
     </section>
 
@@ -502,7 +502,28 @@
       </div>
       <div class="range-labels">
         <span class="t" id="googl-to-target">Take-profit $278.80</span>
-        <span class="s" id="googl-to-stop">Stop $288.70</span>
+        <span class="s" id="googl-to-stop">Stop $286.30</span>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-mstr">
+      <div class="trade-head">
+        <div class="label">Open trade · MSTR 3x short · opened $87.92 (12:02 PM CT Nov 19)</div>
+        <div class="sub" id="mstr-src">Waiting for MSTRx mark…</div>
+      </div>
+      <div id="mstr-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Unrealized, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$87.92</b></span>
+        <span>Size <b>0.7 MSTRx</b></span>
+        <span>Mark <b id="mstr-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="mstr-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="mstr-to-target">Take-profit $83.85</span>
+        <span class="s" id="mstr-to-stop">Stop $89.95</span>
       </div>
     </section>
 
@@ -739,7 +760,7 @@
     if (!QQQ.closed) { pollQqq(); setInterval(pollQqq, 5000); }
 
     // GOOGL 3x futures short, opened 10:59 AM CT Nov 19, 2026 (practice).
-    const GOOGL = { entry: 285.40, size: 0.25, stop: 288.70, target: 278.80, fee: 0.04, closed: false, exit: null, realized: 0 };
+    const GOOGL = { entry: 285.40, size: 0.25, stop: 286.30, target: 278.80, fee: 0.04, closed: false, exit: null, realized: 0 };
     let googlMark = null;
     function googlPnl() { if (GOOGL.closed) return GOOGL.realized; return googlMark == null ? -GOOGL.fee : (GOOGL.entry - googlMark) * GOOGL.size - GOOGL.fee; }
     async function pollGoogl() {
@@ -757,7 +778,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("googl-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("googl-src").textContent = "Kraken GOOGLx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("googl-to-stop").textContent = "Stop $288.70  ·  " + (m >= GOOGL.stop ? "at stop" : "$" + (GOOGL.stop - m).toFixed(2) + " away");
+        document.getElementById("googl-to-stop").textContent = "Stop $286.30  ·  " + (m >= GOOGL.stop ? "at stop" : "$" + (GOOGL.stop - m).toFixed(2) + " away");
         document.getElementById("googl-to-target").textContent = "Take-profit $278.80  ·  " + (m <= GOOGL.target ? "at target" : "$" + (m - GOOGL.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - GOOGL.target) / (GOOGL.stop - GOOGL.target) * 100));
         document.getElementById("googl-range-mark").style.left = pct + "%";
@@ -767,6 +788,36 @@
       }
     }
     if (!GOOGL.closed) { pollGoogl(); setInterval(pollGoogl, 5000); }
+
+    // MSTR 3x futures short, opened 12:02 PM CT Nov 19, 2026 (practice).
+    const MSTR = { entry: 87.92, size: 0.7, stop: 89.95, target: 83.85, fee: 0.03, closed: false, exit: null, realized: 0 };
+    let mstrMark = null;
+    function mstrPnl() { if (MSTR.closed) return MSTR.realized; return mstrMark == null ? -MSTR.fee : (MSTR.entry - mstrMark) * MSTR.size - MSTR.fee; }
+    async function pollMstr() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_MSTRXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        mstrMark = m;
+        const pnl = mstrPnl();
+        const el = document.getElementById("mstr-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("mstr-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("mstr-src").textContent = "Kraken MSTRx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("mstr-to-stop").textContent = "Stop $89.95  ·  " + (m >= MSTR.stop ? "at stop" : "$" + (MSTR.stop - m).toFixed(2) + " away");
+        document.getElementById("mstr-to-target").textContent = "Take-profit $83.85  ·  " + (m <= MSTR.target ? "at target" : "$" + (m - MSTR.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - MSTR.target) / (MSTR.stop - MSTR.target) * 100));
+        document.getElementById("mstr-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("mstr-src").textContent = "MSTR mark unavailable, retrying…";
+      }
+    }
+    if (!MSTR.closed) { pollMstr(); setInterval(pollMstr, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1049,7 +1100,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1071,9 +1122,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1094,7 +1145,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
