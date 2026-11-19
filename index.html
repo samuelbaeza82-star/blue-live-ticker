@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blue's Live Ticker — Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #05070c;
+      --bg-2: #0a0f18;
+      --card: #10161f;
+      --card-2: #151c28;
+      --border: rgba(232, 237, 247, 0.08);
+      --text: #e8edf7;
+      --muted: #8b95a8;
+      --dim: #5d6778;
+      --green: #22d67a;
+      --green-dim: rgba(34, 214, 122, 0.16);
+      --red: #ff5c7a;
+      --red-dim: rgba(255, 92, 122, 0.16);
+      --amber: #f5c15d;
+      --amber-dim: rgba(245, 193, 93, 0.14);
+      --live: #3ee0c2;
+      --live-dim: rgba(62, 224, 194, 0.16);
+      --blue: #6ea8ff;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Outfit, "Segoe UI", system-ui, sans-serif;
+      min-height: 100%;
+    }
+
+    body {
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(62, 224, 194, 0.08), transparent 50%),
+        radial-gradient(900px 500px at 100% 0%, rgba(110, 168, 255, 0.07), transparent 45%),
+        radial-gradient(800px 400px at 50% 120%, rgba(245, 193, 93, 0.05), transparent 50%),
+        var(--bg);
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 22px 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 640px;
+    }
+
+    .note strong { color: var(--text); font-weight: 600; }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .clock {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 11px 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(16, 22, 31, 0.8);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--dim);
+    }
+
+    .status.live {
+      color: var(--live);
+      background: var(--live-dim);
+      border-color: rgba(62, 224, 194, 0.28);
+    }
+    .status.live .dot {
+      background: var(--live);
+      box-shadow: 0 0 0 0 rgba(62, 224, 194, 0.7);
+      animation: pulse 1.6s ease-out infinite;
+    }
+
+    .status.reconnect {
+      color: var(--amber);
+      background: var(--amber-dim);
+      border-color: rgba(245, 193, 93, 0.3);
+    }
+    .status.reconnect .dot {
+      background: var(--amber);
+      animation: pulse 1s ease-out infinite;
+    }
+
+    .status.offline {
+      color: var(--red);
+      background: var(--red-dim);
+      border-color: rgba(255, 92, 122, 0.3);
+    }
+    .status.offline .dot { background: var(--red); }
+    .notice {
+      display: none;
+      margin: 0 0 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 92, 122, 0.45);
+      background: rgba(255, 92, 122, 0.10);
+      color: #ffd6de;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .notice.show { display: block; }
+    .notice.warn {
+      border-color: rgba(245, 197, 66, 0.45);
+      background: rgba(245, 197, 66, 0.10);
+      color: #fbe7b0;
+    }
+    .notice strong { margin-right: 6px; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(62, 224, 194, 0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(62, 224, 194, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(62, 224, 194, 0); }
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245, 193, 93, 0.25);
+    }
+
+    .accounts {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 14px;
+      margin: 22px 0 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--card-2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .big {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .accounts .big { font-size: 34px; }
+    .accounts .combined .big { font-size: 42px; }
+
+    .pos, .neg, .flat { transition: color 0.2s ease; }
+    .pos { color: var(--green); }
+    .neg { color: var(--red); }
+    .flat { color: var(--text); }
+
+    .sub {
+      margin-top: 6px;
+      color: var(--dim);
+      font-size: 13px;
+    }
+
+    .trade-card {
+      padding: 22px 24px 20px;
+      margin-bottom: 16px;
+    }
+
+    .trade-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .pnl {
+      font-size: 64px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 8px 0 12px;
+      transition: color 0.15s ease;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-bottom: 18px;
+    }
+
+    .meta b { color: var(--text); font-weight: 600; }
+
+    .range {
+      position: relative;
+      height: 10px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--green) 0%, #c8d06a 45%, var(--red) 100%);
+      margin: 8px 0 10px;
+      opacity: 0.9;
+    }
+
+    .range.long {
+      background: linear-gradient(90deg, var(--red) 0%, #c8d06a 55%, var(--green) 100%);
+    }
+
+    .range-mark {
+      position: absolute;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      margin-left: -8px;
+      margin-top: -8px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(5, 7, 12, 0.85), 0 0 16px rgba(255, 255, 255, 0.25);
+      transition: left 0.35s ease;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    .range-labels .t { color: var(--green); }
+    .range-labels .s { color: var(--red); }
+
+    .hit {
+      display: none;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .hit.show { display: block; }
+    .hit.stop { background: var(--red-dim); color: var(--red); }
+    .hit.target { background: var(--green-dim); color: var(--green); }
+
+    .waiting {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .wait-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245, 193, 93, 0.22);
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .wait-row .big { font-size: 28px; margin: 4px 0; }
+
+    .prices {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .px {
+      min-height: 148px;
+    }
+
+    .px-sym {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .px-sym .name { font-weight: 600; font-size: 15px; }
+    .px-sym .pair { color: var(--dim); font-size: 12px; }
+
+    .px .price {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin: 14px 0 8px;
+      transition: color 0.15s ease;
+    }
+
+    .chg {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tick-time {
+      margin-top: 10px;
+      color: var(--dim);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+
+    .flash-up, .flash-down {
+      animation-duration: 0.7s;
+      animation-timing-function: ease-out;
+      animation-fill-mode: forwards;
+    }
+    .flash-up { animation-name: flashUp; }
+    .flash-down { animation-name: flashDown; }
+
+    @keyframes flashUp {
+      0% { box-shadow: inset 0 0 0 1px rgba(34, 214, 122, 0.0), 0 0 0 0 rgba(34, 214, 122, 0); background-color: rgba(34, 214, 122, 0.28); }
+      100% { box-shadow: none; background-color: transparent; }
+    }
+    @keyframes flashDown {
+      0% { box-shadow: inset 0 0 0 1px rgba(255, 92, 122, 0.0), 0 0 0 0 rgba(255, 92, 122, 0); background-color: rgba(255, 92, 122, 0.26); }
+      100% { box-shadow: none; background-color: transparent; }
+    }
+
+    .num-up { color: var(--green) !important; }
+    .num-down { color: var(--red) !important; }
+
+    footer {
+      margin-top: 22px;
+      color: var(--dim);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 980px) {
+      .accounts, .waiting, .prices { grid-template-columns: 1fr 1fr; }
+      .prices { grid-template-columns: 1fr 1fr; }
+      .pnl { font-size: 52px; }
+    }
+    @media (max-width: 640px) {
+      header { flex-direction: column; }
+      .header-right { align-items: flex-start; }
+      .accounts, .waiting, .prices { grid-template-columns: 1fr; }
+      .accounts .combined .big, .accounts .big { font-size: 34px; }
+      .pnl { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Blue's Live Ticker</h1>
+        <p class="note">
+          Positions are as of <strong>4:51 PM CT on Nov 18</strong>.
+          This page streams live prices from Kraken and updates P&amp;L every tick.
+          The full dashboard updates every 2 hours, while this page ticks live.
+        </p>
+        <span class="badge">Practice (paper) account only</span>
+      </div>
+      <div class="header-right">
+        <div id="status" class="status offline" aria-live="polite">
+          <span class="dot"></span>
+          <span id="status-text">Not running</span>
+        </div>
+        <div id="clock" class="clock">— CT</div>
+      </div>
+    </header>
+
+    <div id="notice" class="notice show" role="status">
+      <strong id="notice-title">No live data yet.</strong>
+      <span id="notice-text">If this message doesn't go away within a few seconds, the app you opened this in is blocking the page's script or its network access. Save the file and open it in Chrome, Safari, Edge or Firefox.</span>
+    </div>
+
+    <section class="accounts">
+      <div class="card combined" id="card-combined">
+        <div class="label">Combined equity</div>
+        <div id="combined" class="big flat">$250.00</div>
+        <div class="sub">$250 start + live short P&amp;L + live ETH P&amp;L + live XRP P&amp;L</div>
+      </div>
+      <div class="card" id="card-cash">
+        <div class="label">Cash account</div>
+        <div id="cash" class="big flat">$200.00</div>
+        <div class="sub">$200 start + live ETH P&amp;L + live XRP P&amp;L</div>
+      </div>
+      <div class="card" id="card-lev">
+        <div class="label">Leverage account</div>
+        <div id="leverage" class="big flat">$50.00</div>
+        <div class="sub">$50 start + live short P&amp;L</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-short">
+      <div class="trade-head">
+        <div class="label">Open trade · BTC 2x short</div>
+        <div class="sub" id="mark-source">Waiting for mark price…</div>
+      </div>
+      <div id="short-pnl" class="pnl flat">$0.00</div>
+      <div class="meta">
+        <span>Entry <b>$63,193</b></span>
+        <span>Size <b>0.0015 BTC</b></span>
+        <span>Fee <b>~$0.05</b></span>
+        <span>Mark <b id="mark-price">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="to-target">Target $61,750</span>
+        <span class="s" id="to-stop">Stop $64,150</span>
+      </div>
+      <div id="hit-note" class="hit"></div>
+    </section>
+
+    <section class="card trade-card" id="card-eth">
+      <div class="trade-head">
+        <div class="label">Open trade · ETH long</div>
+        <div class="sub" id="eth-live-source">Waiting for ETH price…</div>
+      </div>
+      <div id="eth-pnl" class="pnl flat">$0.00</div>
+      <div class="sub" id="eth-pnl-note">Before fees</div>
+      <div class="meta">
+        <span>Entry <b>$1,750</b></span>
+        <span>Size <b>0.04228997 ETH</b></span>
+        <span>Live <b id="eth-live-price">—</b></span>
+      </div>
+      <div class="range long" aria-hidden="true">
+        <div id="eth-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="s" id="eth-to-stop">Stop $1,688</span>
+        <span class="t" id="eth-to-target">Take-profit $1,864</span>
+      </div>
+      <div id="eth-hit-note" class="hit"></div>
+    </section>
+
+    <section class="card trade-card" id="card-xrp">
+      <div class="trade-head">
+        <div class="label">Open trade · XRP long</div>
+        <div class="sub" id="xrp-live-source">Waiting for XRP price…</div>
+      </div>
+      <div id="xrp-pnl" class="pnl flat">$0.00</div>
+      <div class="sub" id="xrp-pnl-note">Before fees</div>
+      <div class="meta">
+        <span>Entry <b>$0.9604</b></span>
+        <span>Size <b>90.03536589 XRP</b></span>
+        <span>Live <b id="xrp-live-price">—</b></span>
+      </div>
+      <div class="range long" aria-hidden="true">
+        <div id="xrp-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="s" id="xrp-to-stop">Stop $0.932</span>
+        <span class="t" id="xrp-to-target">Take-profit $1.04</span>
+      </div>
+      <div id="xrp-hit-note" class="hit"></div>
+    </section>
+
+    <section class="waiting" id="waiting-section">
+      <div class="card" id="card-waiting-empty">
+        <span class="wait-tag">Waiting to fill</span>
+        <div class="px-sym">
+          <span class="name">No orders waiting</span>
+        </div>
+        <div class="sub">All cash-account orders are filled or cancelled.</div>
+      </div>
+    </section>
+
+    <section class="prices">
+      <div class="card px" id="card-BTC/USD">
+        <div class="px-sym"><span class="name">Bitcoin</span><span class="pair">BTC/USD</span></div>
+        <div class="price flat" data-price>—</div>
+        <div class="chg flat" data-chg>—</div>
+        <div class="tick-time" data-tick>Last tick: —</div>
+      </div>
+      <div class="card px" id="card-ETH/USD">
+        <div class="px-sym"><span class="name">Ethereum</span><span class="pair">ETH/USD</span></div>
+        <div class="price flat" data-price>—</div>
+        <div class="chg flat" data-chg>—</div>
+        <div class="tick-time" data-tick>Last tick: —</div>
+      </div>
+      <div class="card px" id="card-XRP/USD">
+        <div class="px-sym"><span class="name">XRP</span><span class="pair">XRP/USD</span></div>
+        <div class="price flat" data-price>—</div>
+        <div class="chg flat" data-chg>—</div>
+        <div class="tick-time" data-tick>Last tick: —</div>
+      </div>
+      <div class="card px" id="card-SOL/USD">
+        <div class="px-sym"><span class="name">Solana</span><span class="pair">SOL/USD</span></div>
+        <div class="price flat" data-price>—</div>
+        <div class="chg flat" data-chg>—</div>
+        <div class="tick-time" data-tick>Last tick: —</div>
+      </div>
+      <div class="card px" id="card-PF_XBTUSD">
+        <div class="px-sym"><span class="name">BTC mark</span><span class="pair">PF_XBTUSD</span></div>
+        <div class="price flat" data-price>—</div>
+        <div class="chg flat" data-chg>—</div>
+        <div class="tick-time" data-tick>Last tick: —</div>
+      </div>
+    </section>
+
+    <footer>
+      Live prices from Kraken's public WebSocket, with Kraken's public price API as a backup every 2.5 seconds (no login, no keys).
+      P&amp;L is computed in this browser from the practice positions saved in this file.
+      It is not a broker statement and does not place or change trades.
+    </footer>
+  </div>
+
+  <script>
+    // Practice positions as confirmed 4:51 PM CT, Nov 18, 2026.
+    const POSITIONS = {
+      asOf: "4:51 PM CT on Nov 18",
+      cashStart: 200,
+      leverageStart: 50,
+      short: {
+        symbol: "PF_XBTUSD",
+        side: "short",
+        size: 0.0015,
+        entry: 63193,
+        stop: 64150,
+        target: 61750,
+        entryFee: 0.05,
+        leverage: 2
+      },
+      ethLong: {
+        symbol: "ETH/USD",
+        side: "long",
+        size: 0.04228997,
+        entry: 1750,
+        stop: 1688,
+        target: 1864
+      },
+      xrpLong: {
+        symbol: "XRP/USD",
+        side: "long",
+        size: 90.03536589,
+        entry: 0.9604,
+        stop: 0.932,
+        target: 1.04
+      },
+      waiting: []
+    };
+
+    const SPOT_URL = "wss://ws.kraken.com/v2";
+    const FUT_URL = "wss://futures.kraken.com/ws/v1";
+    const SPOT_SYMBOLS = ["BTC/USD", "ETH/USD", "XRP/USD", "SOL/USD"];
+    const TZ = "America/Chicago";
+
+    const state = {
+      prices: {},
+      mark: null,
+      markApprox: false,
+      lastMarkSource: "none",
+      spotOk: false,
+      futOk: false,
+      spotOpen: false,
+      futOpen: false
+    };
+
+    const money = (n, digits) => {
+      const d = digits == null ? 2 : digits;
+      const abs = Math.abs(n).toLocaleString("en-US", {
+        minimumFractionDigits: d,
+        maximumFractionDigits: d
+      });
+      return (n < 0 ? "-$" : "$") + abs;
+    };
+
+    const moneySigned = (n) => {
+      const abs = Math.abs(n).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      if (n > 0.004999) return "+$" + abs;
+      if (n < -0.004999) return "-$" + abs;
+      return "$" + abs;
+    };
+
+    const formatPrice = (n) => {
+      if (n == null || !isFinite(n)) return "—";
+      const digits = n >= 1000 ? 2 : n >= 100 ? 2 : n >= 1 ? 2 : 5;
+      return money(n, digits);
+    };
+
+    const formatPct = (n) => {
+      if (n == null || !isFinite(n)) return "—";
+      const sign = n > 0 ? "+" : "";
+      return sign + n.toFixed(2) + "%";
+    };
+
+    const signClass = (n) => {
+      if (n > 0.004999) return "pos";
+      if (n < -0.004999) return "neg";
+      return "flat";
+    };
+
+    const ctTime = (date) => date.toLocaleTimeString("en-US", {
+      timeZone: TZ,
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    }) + " CT";
+
+    const parseTs = (ts) => {
+      if (ts == null) return new Date();
+      if (typeof ts === "number") {
+        const ms = ts > 1e12 ? ts : ts * 1000;
+        return new Date(ms);
+      }
+      const d = new Date(ts);
+      return isNaN(d.getTime()) ? new Date() : d;
+    };
+
+    const STALE_MS = 8000;
+    const POLL_MS = 2500;
+    const START_TS = Date.now();
+    state.lastSpotWs = 0;
+    state.lastSpotRest = 0;
+    state.lastFutWs = 0;
+    state.lastFutRest = 0;
+    state.spotErr = "";
+    state.futErr = "";
+    state.restErr = "";
+    state.futRestErr = "";
+
+    function setStatus() {
+      const el = document.getElementById("status");
+      const text = document.getElementById("status-text");
+      const notice = document.getElementById("notice");
+      const noticeText = document.getElementById("notice-text");
+      const now = Date.now();
+      const spotWsFresh = now - state.lastSpotWs < STALE_MS;
+      const spotRestFresh = now - state.lastSpotRest < STALE_MS;
+      const futFresh = (now - state.lastFutWs < STALE_MS) || (now - state.lastFutRest < STALE_MS);
+      const anyEver = state.lastSpotWs || state.lastSpotRest || state.lastFutWs || state.lastFutRest;
+      el.classList.remove("live", "reconnect", "offline");
+      notice.classList.remove("warn");
+
+      if (spotWsFresh) {
+        el.classList.add("live");
+        text.textContent = futFresh ? "Live via WebSocket" : "Live via WebSocket · mark ≈ spot";
+        notice.classList.remove("show");
+      } else if (spotRestFresh) {
+        el.classList.add("live");
+        text.textContent = "Live via polling";
+        notice.classList.add("show", "warn");
+        document.getElementById("notice-title").textContent = "Backup mode.";
+        noticeText.textContent = "The live stream (WebSocket) isn't connecting" +
+          (state.spotErr ? " (" + state.spotErr + ")" : "") +
+          ", so prices are being fetched from Kraken every 2.5 seconds instead. Numbers are still live." +
+          (futFresh ? "" : " The BTC short uses the spot BTC price as an approximation of the futures mark.");
+      } else if (now - START_TS < 6000 && !anyEver) {
+        el.classList.add("reconnect");
+        text.textContent = "Connecting…";
+        notice.classList.remove("show");
+      } else {
+        el.classList.add(anyEver ? "reconnect" : "offline");
+        text.textContent = anyEver ? "Reconnecting — prices may be stale" : "No connection";
+        notice.classList.add("show");
+        document.getElementById("notice-title").textContent = anyEver ? "Connection lost." : "No live data.";
+        const reasons = [];
+        if (state.spotErr) reasons.push("stream: " + state.spotErr);
+        if (state.restErr) reasons.push("backup API: " + state.restErr);
+        noticeText.textContent = (anyEver
+          ? "The connection to Kraken dropped and is retrying. Prices shown are from the last update. "
+          : "This page can't reach Kraken. ") +
+          (reasons.length ? "(" + reasons.join("; ") + ") " : "") +
+          "Check your internet connection. If you opened this inside a chat app, email or file preview, that viewer is probably blocking it — save the file and open it in Chrome, Safari, Edge or Firefox.";
+      }
+    }
+
+    const SPOT_REST_URL = "https://api.kraken.com/0/public/Ticker?pair=XBTUSD,ETHUSD,XRPUSD,SOLUSD";
+    const FUT_REST_URL = "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD";
+    const REST_PAIR_MAP = {
+      XXBTZUSD: "BTC/USD", XBTUSD: "BTC/USD",
+      XETHZUSD: "ETH/USD", ETHUSD: "ETH/USD",
+      XXRPZUSD: "XRP/USD", XRPUSD: "XRP/USD",
+      SOLUSD: "SOL/USD"
+    };
+    let spotPollBusy = false;
+    let futPollBusy = false;
+    let lastSpotPoll = 0;
+    let lastFutPoll = 0;
+
+    async function pollSpotRest() {
+      if (spotPollBusy) return;
+      spotPollBusy = true;
+      lastSpotPoll = Date.now();
+      try {
+        const r = await fetch(SPOT_REST_URL + "&_=" + Date.now(), { cache: "no-store" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const j = await r.json();
+        if (j.error && j.error.length) throw new Error(j.error.join(", "));
+        let n = 0;
+        for (const key of Object.keys(j.result || {})) {
+          const sym = REST_PAIR_MAP[key];
+          const t = j.result[key];
+          if (!sym || !t || !t.c) continue;
+          const last = Number(t.c[0]);
+          const open = Number(t.o);
+          // "o" is today's open (00:00 UTC), close to but not exactly a 24h change.
+          const chg = isFinite(open) && open > 0 ? (last - open) / open * 100 : null;
+          applySpotTick(sym, last, chg, null);
+          n++;
+        }
+        if (n) {
+          state.lastSpotRest = Date.now();
+          state.restErr = "";
+        }
+      } catch (e) {
+        state.restErr = (e && e.message) ? e.message : "request blocked";
+      } finally {
+        spotPollBusy = false;
+        setStatus();
+      }
+    }
+
+    async function pollFutRest() {
+      if (futPollBusy) return;
+      futPollBusy = true;
+      lastFutPoll = Date.now();
+      try {
+        const r = await fetch(FUT_REST_URL, { cache: "no-store" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const j = await r.json();
+        const t = j && j.ticker;
+        if (!t || t.markPrice == null) throw new Error("no ticker");
+        const open = Number(t.open24h);
+        const mark = Number(t.markPrice);
+        applyFuturesTick({
+          markPrice: mark,
+          last: t.last,
+          change: isFinite(open) && open > 0 ? (mark - open) / open * 100 : null,
+          time: t.lastTime
+        });
+        state.lastFutRest = Date.now();
+        state.futRestErr = "";
+      } catch (e) {
+        // Usually blocked by the browser (CORS) when opened from a file; spot BTC is used as the mark instead.
+        state.futRestErr = (e && e.message) ? e.message : "request blocked";
+      } finally {
+        futPollBusy = false;
+        setStatus();
+      }
+    }
+
+    function watchdog() {
+      const now = Date.now();
+      if (now - START_TS > 5000) {
+        if (now - state.lastSpotWs > STALE_MS && now - lastSpotPoll >= POLL_MS) pollSpotRest();
+        const futWsStale = now - state.lastFutWs > STALE_MS;
+        // If the futures API is blocked, back off to every 30s and rely on spot BTC as the mark.
+        const futInterval = state.futRestErr ? 30000 : POLL_MS;
+        if (futWsStale && now - lastFutPoll >= futInterval) pollFutRest();
+        // Futures mark went stale: fall back to spot BTC as an approximation.
+        if (futWsStale && now - state.lastFutRest > STALE_MS && state.lastMarkSource === "futures") {
+          state.lastMarkSource = "spot-fallback";
+        }
+      }
+      setStatus();
+    }
+
+    function flash(card, up) {
+      if (!card) return;
+      card.classList.remove("flash-up", "flash-down");
+      void card.offsetWidth;
+      card.classList.add(up ? "flash-up" : "flash-down");
+      const nums = card.querySelectorAll(".price, .pnl, .big");
+      nums.forEach((n) => {
+        n.classList.remove("num-up", "num-down");
+        void n.offsetWidth;
+        n.classList.add(up ? "num-up" : "num-down");
+        setTimeout(() => n.classList.remove("num-up", "num-down"), 700);
+      });
+    }
+
+    function renderClock() {
+      document.getElementById("clock").textContent = ctTime(new Date());
+    }
+
+    function shortPnl(mark) {
+      const p = POSITIONS.short;
+      return (p.entry - mark) * p.size - p.entryFee;
+    }
+
+    function currentEthPx() {
+      const tick = state.prices[POSITIONS.ethLong.symbol];
+      return tick && isFinite(tick.last) ? tick.last : null;
+    }
+
+    function ethPnl(px) {
+      const p = POSITIONS.ethLong;
+      return (px - p.entry) * p.size;
+    }
+
+    function currentXrpPx() {
+      const tick = state.prices[POSITIONS.xrpLong.symbol];
+      return tick && isFinite(tick.last) ? tick.last : null;
+    }
+
+    function xrpPnl(px) {
+      const p = POSITIONS.xrpLong;
+      return (px - p.entry) * p.size;
+    }
+
+    function cashLivePnl() {
+      const ePx = currentEthPx();
+      const xPx = currentXrpPx();
+      return (ePx != null ? ethPnl(ePx) : 0) + (xPx != null ? xrpPnl(xPx) : 0);
+    }
+
+    function renderCashAndCombined(sPnl) {
+      const cPnl = cashLivePnl();
+      const cashEl = document.getElementById("cash");
+      const cash = POSITIONS.cashStart + cPnl;
+      cashEl.textContent = money(cash);
+      cashEl.classList.remove("pos", "neg", "flat");
+      cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
+
+      const combinedEl = document.getElementById("combined");
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl;
+      combinedEl.textContent = money(combined);
+      combinedEl.classList.remove("pos", "neg", "flat");
+      combinedEl.classList.add(signClass(combined - 250));
+    }
+
+    function updatePnL() {
+      const mark = state.mark;
+      const p = POSITIONS.short;
+      const pnlEl = document.getElementById("short-pnl");
+      const combinedEl = document.getElementById("combined");
+      const levEl = document.getElementById("leverage");
+      const src = document.getElementById("mark-source");
+      const markEl = document.getElementById("mark-price");
+      const hit = document.getElementById("hit-note");
+
+      if (mark == null || !isFinite(mark)) return;
+
+      const pnl = shortPnl(mark);
+      const prev = pnlEl.dataset.val != null ? Number(pnlEl.dataset.val) : null;
+      pnlEl.textContent = moneySigned(pnl);
+      pnlEl.classList.remove("pos", "neg", "flat");
+      pnlEl.classList.add(signClass(pnl));
+      if (prev != null && Math.abs(pnl - prev) >= 0.0005) {
+        flash(document.getElementById("card-short"), pnl > prev);
+        flash(document.getElementById("card-combined"), pnl > prev);
+        flash(document.getElementById("card-lev"), pnl > prev);
+      }
+      pnlEl.dataset.val = String(pnl);
+
+      const lev = POSITIONS.leverageStart + pnl;
+      renderCashAndCombined(pnl);
+      levEl.textContent = money(lev);
+      levEl.classList.remove("pos", "neg", "flat");
+      levEl.classList.add(signClass(lev - 50));
+
+      markEl.textContent = formatPrice(mark);
+      src.textContent = state.markApprox
+        ? "Using spot BTC/USD as an approximation of the futures mark"
+        : "Using Kraken BTC perpetual mark price";
+
+      const toStop = p.stop - mark;
+      const toTarget = mark - p.target;
+      document.getElementById("to-target").textContent =
+        "Target $61,750  ·  " + (toTarget <= 0 ? "at target" : formatPrice(toTarget) + " to go");
+      document.getElementById("to-stop").textContent =
+        "Stop $64,150  ·  " + (toStop <= 0 ? "at stop" : formatPrice(toStop) + " away");
+
+      const span = p.stop - p.target;
+      let pct = (mark - p.target) / span;
+      pct = Math.min(1, Math.max(0, pct));
+      document.getElementById("range-mark").style.left = (pct * 100) + "%";
+
+      if (mark >= p.stop) {
+        hit.className = "hit show stop";
+        hit.textContent = "Mark has reached the $64,150 stop. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else if (mark <= p.target) {
+        hit.className = "hit show target";
+        hit.textContent = "Mark has reached the $61,750 target. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else {
+        hit.className = "hit";
+        hit.textContent = "";
+      }
+    }
+
+    function updateEthPnL() {
+      const p = POSITIONS.ethLong;
+      const px = currentEthPx();
+      const pnlEl = document.getElementById("eth-pnl");
+      const src = document.getElementById("eth-live-source");
+      const pxEl = document.getElementById("eth-live-price");
+      const hit = document.getElementById("eth-hit-note");
+      if (px == null) return;
+
+      const pnl = ethPnl(px);
+      const prev = pnlEl.dataset.val != null ? Number(pnlEl.dataset.val) : null;
+      pnlEl.textContent = moneySigned(pnl);
+      pnlEl.classList.remove("pos", "neg", "flat");
+      pnlEl.classList.add(signClass(pnl));
+      if (prev != null && Math.abs(pnl - prev) >= 0.0005) {
+        flash(document.getElementById("card-eth"), pnl > prev);
+        flash(document.getElementById("card-cash"), pnl > prev);
+        flash(document.getElementById("card-combined"), pnl > prev);
+      }
+      pnlEl.dataset.val = String(pnl);
+
+      const mark = state.mark;
+      const sPnl = (mark != null && isFinite(mark)) ? shortPnl(mark) : 0;
+      renderCashAndCombined(sPnl);
+
+      pxEl.textContent = formatPrice(px);
+      src.textContent = "Using live ETH/USD price";
+
+      const toStop = px - p.stop;
+      const toTarget = p.target - px;
+      document.getElementById("eth-to-target").textContent =
+        "Take-profit $1,864  ·  " + (toTarget <= 0 ? "at take-profit" : formatPrice(toTarget) + " to go");
+      document.getElementById("eth-to-stop").textContent =
+        "Stop $1,688  ·  " + (toStop <= 0 ? "at stop" : formatPrice(toStop) + " away");
+
+      const span = p.target - p.stop;
+      let pct = (px - p.stop) / span;
+      pct = Math.min(1, Math.max(0, pct));
+      document.getElementById("eth-range-mark").style.left = (pct * 100) + "%";
+
+      if (px <= p.stop) {
+        hit.className = "hit show stop";
+        hit.textContent = "Live ETH price has reached the $1,688 stop. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else if (px >= p.target) {
+        hit.className = "hit show target";
+        hit.textContent = "Live ETH price has reached the $1,864 take-profit. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else {
+        hit.className = "hit";
+        hit.textContent = "";
+      }
+    }
+
+    function updateXrpPnL() {
+      const p = POSITIONS.xrpLong;
+      const px = currentXrpPx();
+      const pnlEl = document.getElementById("xrp-pnl");
+      const src = document.getElementById("xrp-live-source");
+      const pxEl = document.getElementById("xrp-live-price");
+      const hit = document.getElementById("xrp-hit-note");
+      if (px == null) return;
+
+      const pnl = xrpPnl(px);
+      const prev = pnlEl.dataset.val != null ? Number(pnlEl.dataset.val) : null;
+      pnlEl.textContent = moneySigned(pnl);
+      pnlEl.classList.remove("pos", "neg", "flat");
+      pnlEl.classList.add(signClass(pnl));
+      if (prev != null && Math.abs(pnl - prev) >= 0.0005) {
+        flash(document.getElementById("card-xrp"), pnl > prev);
+        flash(document.getElementById("card-cash"), pnl > prev);
+        flash(document.getElementById("card-combined"), pnl > prev);
+      }
+      pnlEl.dataset.val = String(pnl);
+
+      const mark = state.mark;
+      const sPnl = (mark != null && isFinite(mark)) ? shortPnl(mark) : 0;
+      renderCashAndCombined(sPnl);
+
+      pxEl.textContent = formatPrice(px);
+      src.textContent = "Using live XRP/USD price";
+
+      const toStop = px - p.stop;
+      const toTarget = p.target - px;
+      document.getElementById("xrp-to-target").textContent =
+        "Take-profit $1.04  ·  " + (toTarget <= 0 ? "at take-profit" : formatPrice(toTarget) + " to go");
+      document.getElementById("xrp-to-stop").textContent =
+        "Stop $0.932  ·  " + (toStop <= 0 ? "at stop" : formatPrice(toStop) + " away");
+
+      const span = p.target - p.stop;
+      let pct = (px - p.stop) / span;
+      pct = Math.min(1, Math.max(0, pct));
+      document.getElementById("xrp-range-mark").style.left = (pct * 100) + "%";
+
+      if (px <= p.stop) {
+        hit.className = "hit show stop";
+        hit.textContent = "Live XRP price has reached the $0.932 stop. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else if (px >= p.target) {
+        hit.className = "hit show target";
+        hit.textContent = "Live XRP price has reached the $1.04 take-profit. This ticker does not close trades — check the dashboard or a recap to confirm.";
+      } else {
+        hit.className = "hit";
+        hit.textContent = "";
+      }
+    }
+
+    function updateWaiting() {
+      for (const w of POSITIONS.waiting) {
+        const tick = state.prices[w.symbol];
+        if (!tick) continue;
+        const px = tick.last;
+        const diff = px - w.buy;
+        const pct = (diff / w.buy) * 100;
+        const el = document.getElementById(w.id + "-wait");
+        const sub = document.getElementById(w.id + "-wait-sub");
+        const card = document.getElementById("card-" + w.id);
+        const prev = el.dataset.val != null ? Number(el.dataset.val) : null;
+        el.textContent = formatPct(pct);
+        el.classList.remove("pos", "neg", "flat");
+        // Being above the buy price is why the order has not filled — not a gain or a loss.
+        el.classList.add(diff < 0 ? "pos" : "flat");
+        if (diff > 0) {
+          sub.textContent = formatPrice(diff) + "  ·  " + formatPct(pct) + " above the buy price";
+        } else if (diff < 0) {
+          sub.textContent = formatPrice(Math.abs(diff)) + "  ·  " + formatPct(Math.abs(pct)) + " below the buy price (in range)";
+        } else {
+          sub.textContent = "At the buy price";
+        }
+        if (prev != null && Math.abs(px - prev) > 0) {
+          flash(card, px > prev);
+        }
+        el.dataset.val = String(px);
+      }
+    }
+
+    function applySpotTick(symbol, last, changePct, timestamp) {
+      if (!symbol || last == null || !isFinite(Number(last))) return;
+      const lastN = Number(last);
+      const chg = changePct == null ? null : Number(changePct);
+      const prev = state.prices[symbol] ? state.prices[symbol].last : null;
+      state.prices[symbol] = {
+        last: lastN,
+        changePct: isFinite(chg) ? chg : null,
+        ts: parseTs(timestamp)
+      };
+
+      const card = document.getElementById("card-" + symbol);
+      if (card) {
+        const priceEl = card.querySelector("[data-price]");
+        const chgEl = card.querySelector("[data-chg]");
+        const tickEl = card.querySelector("[data-tick]");
+        priceEl.textContent = formatPrice(lastN);
+        if (chg != null && isFinite(chg)) {
+          chgEl.textContent = formatPct(chg) + " 24h";
+          chgEl.classList.remove("pos", "neg", "flat");
+          chgEl.classList.add(signClass(chg));
+        }
+        tickEl.textContent = "Last tick: " + ctTime(state.prices[symbol].ts);
+        if (prev != null && lastN !== prev) flash(card, lastN > prev);
+      }
+
+      if (state.lastMarkSource !== "futures" && symbol === "BTC/USD") {
+        state.mark = lastN;
+        state.markApprox = true;
+        updatePnL();
+        const mCard = document.getElementById("card-PF_XBTUSD");
+        const mPrice = mCard.querySelector("[data-price]");
+        const mChg = mCard.querySelector("[data-chg]");
+        const mTick = mCard.querySelector("[data-tick]");
+        const prevMark = mPrice.dataset.val != null ? Number(mPrice.dataset.val) : null;
+        mPrice.textContent = formatPrice(lastN);
+        mChg.textContent = "Spot approximation";
+        mChg.classList.remove("pos", "neg", "flat");
+        mChg.classList.add("flat");
+        mTick.textContent = "Last tick: " + ctTime(state.prices[symbol].ts);
+        if (prevMark != null && lastN !== prevMark) flash(mCard, lastN > prevMark);
+        mPrice.dataset.val = String(lastN);
+      }
+
+      updateWaiting();
+      updateEthPnL();
+      updateXrpPnL();
+    }
+
+    function applyFuturesTick(msg) {
+      const mark = Number(msg.markPrice != null ? msg.markPrice : msg.mark_price);
+      const last = Number(msg.last);
+      const change = msg.change != null ? Number(msg.change) : null;
+      const px = isFinite(mark) ? mark : last;
+      if (!isFinite(px)) return;
+      const ts = parseTs(msg.time);
+      const prev = state.mark;
+      state.mark = px;
+      state.markApprox = false;
+      state.lastMarkSource = "futures";
+      state.futOk = true;
+
+      const card = document.getElementById("card-PF_XBTUSD");
+      const priceEl = card.querySelector("[data-price]");
+      const chgEl = card.querySelector("[data-chg]");
+      const tickEl = card.querySelector("[data-tick]");
+      priceEl.textContent = formatPrice(px);
+      if (change != null && isFinite(change)) {
+        chgEl.textContent = formatPct(change) + " 24h";
+        chgEl.classList.remove("pos", "neg", "flat");
+        chgEl.classList.add(signClass(change));
+      } else {
+        chgEl.textContent = "Futures mark";
+      }
+      tickEl.textContent = "Last tick: " + ctTime(ts);
+      if (prev != null && px !== prev) flash(card, px > prev);
+      priceEl.dataset.val = String(px);
+      updatePnL();
+    }
+
+    function handleSpotMessage(raw) {
+      let msg;
+      try { msg = JSON.parse(raw); } catch (e) { return; }
+      if (!msg || typeof msg !== "object") return;
+
+      if (msg.channel === "ticker") {
+        const rows = Array.isArray(msg.data) ? msg.data : (msg.data ? [msg.data] : []);
+        for (const row of rows) {
+          if (!row) continue;
+          applySpotTick(row.symbol, row.last, row.change_pct, row.timestamp);
+          state.spotOk = true;
+          state.lastSpotWs = Date.now();
+          state.spotErr = "";
+        }
+        setStatus();
+        return;
+      }
+
+      if (msg.method === "subscribe" && msg.success) {
+        state.spotOk = true;
+        setStatus();
+      }
+    }
+
+    function handleFuturesMessage(raw) {
+      let msg;
+      try { msg = JSON.parse(raw); } catch (e) { return; }
+      if (!msg || typeof msg !== "object") return;
+      if (msg.event === "subscribed" && msg.feed === "ticker") {
+        state.futOk = true;
+        setStatus();
+        return;
+      }
+      if (msg.feed === "ticker" && (msg.product_id === "PF_XBTUSD" || msg.markPrice != null || msg.last != null)) {
+        applyFuturesTick(msg);
+        state.lastFutWs = Date.now();
+        state.futErr = "";
+        setStatus();
+      }
+    }
+
+    function connectLoop(kind) {
+      let delay = 1000;
+      let ws = null;
+      let pingTimer = null;
+      let stopped = false;
+
+      const clearPing = () => {
+        if (pingTimer) {
+          clearInterval(pingTimer);
+          pingTimer = null;
+        }
+      };
+
+      const open = () => {
+        if (stopped) return;
+        if (kind === "spot") state.spotOpen = false;
+        else state.futOpen = false;
+        setStatus();
+
+        try {
+          ws = new WebSocket(kind === "spot" ? SPOT_URL : FUT_URL);
+        } catch (err) {
+          const why = "blocked by this viewer" + (err && err.message ? ": " + err.message : "");
+          if (kind === "spot") state.spotErr = why; else state.futErr = why;
+          schedule();
+          return;
+        }
+
+        ws.addEventListener("open", () => {
+          delay = 1000;
+          if (kind === "spot") {
+            state.spotOpen = true;
+            ws.send(JSON.stringify({
+              method: "subscribe",
+              params: {
+                channel: "ticker",
+                symbol: SPOT_SYMBOLS,
+                event_trigger: "bbo",
+                snapshot: true
+              }
+            }));
+            pingTimer = setInterval(() => {
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ method: "ping" }));
+              }
+            }, 25000);
+          } else {
+            state.futOpen = true;
+            ws.send(JSON.stringify({
+              event: "subscribe",
+              feed: "ticker",
+              product_ids: ["PF_XBTUSD"]
+            }));
+            pingTimer = setInterval(() => {
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ event: "ping" }));
+              }
+            }, 25000);
+          }
+          setStatus();
+        });
+
+        ws.addEventListener("message", (ev) => {
+          if (kind === "spot") handleSpotMessage(ev.data);
+          else handleFuturesMessage(ev.data);
+        });
+
+        ws.addEventListener("close", (ev) => {
+          clearPing();
+          const why = "closed" + (ev && ev.code ? " (code " + ev.code + ")" : "");
+          if (kind === "spot") state.spotErr = state.spotErr || why;
+          else state.futErr = state.futErr || why;
+          if (kind === "spot") state.spotOpen = false;
+          else {
+            state.futOpen = false;
+            if (state.lastMarkSource === "futures") {
+              state.lastMarkSource = "spot-fallback";
+              if (state.prices["BTC/USD"]) {
+                state.mark = state.prices["BTC/USD"].last;
+                state.markApprox = true;
+                updatePnL();
+              }
+            }
+          }
+          setStatus();
+          schedule();
+        });
+
+        ws.addEventListener("error", () => {
+          if (kind === "spot") state.spotErr = "connection refused or blocked";
+          else state.futErr = "connection refused or blocked";
+          try { ws.close(); } catch (e) {}
+        });
+      };
+
+      const schedule = () => {
+        if (stopped) return;
+        const wait = delay;
+        delay = Math.min(delay * 2, 15000);
+        setTimeout(open, wait);
+      };
+
+      open();
+      return () => { stopped = true; clearPing(); try { ws && ws.close(); } catch (e) {} };
+    }
+
+    renderClock();
+    setInterval(renderClock, 250);
+    setStatus();
+    setInterval(watchdog, 1000);
+    connectLoop("spot");
+    connectLoop("futures");
+  </script>
+</body>
+</html>
