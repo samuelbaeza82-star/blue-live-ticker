@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + live short P&amp;L + live ETH P&amp;L + live XRP P&amp;L</div>
+        <div class="sub">$250 start + realized BTC short + live NVDA, ETH &amp; XRP P&amp;L</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized short P&amp;L (no open futures)</div>
+        <div class="sub">$50 start + realized BTC short + live NVDA 3x long</div>
       </div>
     </section>
 
@@ -483,6 +483,27 @@
         <span class="s" id="to-stop">Stop $63,300</span>
       </div>
       <div id="hit-note" class="hit"></div>
+    </section>
+
+    <section class="card trade-card" id="card-nvda">
+      <div class="trade-head">
+        <div class="label">Open trade · NVDA 3x long (futures PF_NVDAXUSD) · opened 8:45 AM CT Nov 19</div>
+        <div class="sub" id="nvda-src">Waiting for NVDA mark…</div>
+      </div>
+      <div id="nvda-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Before exit fee (entry fee ~$0.05)</div>
+      <div class="meta">
+        <span>Entry <b>$157.88</b></span>
+        <span>Size <b>0.6 NVDAx</b></span>
+        <span>Mark <b id="nvda-mark">—</b></span>
+      </div>
+      <div class="range long" aria-hidden="true">
+        <div id="nvda-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="s" id="nvda-to-stop">Stop $155.90</span>
+        <span class="t" id="nvda-to-target">Take-profit $161.00</span>
+      </div>
     </section>
 
     <section class="card trade-card" id="card-eth">
@@ -533,9 +554,9 @@
       <div class="card" id="card-waiting-empty">
         <span class="wait-tag">Waiting to fill</span>
         <div class="px-sym">
-          <span class="name">No orders waiting</span>
+          <span class="name">AMZNx limit buy 0.14 @ $267.50</span>
         </div>
-        <div class="sub">All cash-account orders are filled or cancelled.</div>
+        <div class="sub">Stop $262.50 · take-profit $275 once filled (placed 9:38 PM CT Nov 18)</div>
       </div>
     </section>
 
@@ -582,7 +603,7 @@
   <script>
     // Practice positions as confirmed 4:51 PM CT, Nov 18, 2026.
     const POSITIONS = {
-      asOf: "10:36 PM CT on Nov 18",
+      asOf: "8:45 AM CT on Nov 19",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -616,6 +637,37 @@
       },
       waiting: []
     };
+
+    // NVDA 3x futures long, opened 8:45 AM CT Nov 19, 2026 (practice).
+    const NVDA = { entry: 157.88, size: 0.6, stop: 155.9, target: 161.0 };
+    let nvdaMark = null;
+    function nvdaPnl() { return nvdaMark == null ? 0 : (nvdaMark - NVDA.entry) * NVDA.size; }
+    async function pollNvda() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_NVDAXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        nvdaMark = m;
+        const pnl = nvdaPnl();
+        const el = document.getElementById("nvda-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("nvda-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("nvda-src").textContent = "Kraken NVDAx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("nvda-to-stop").textContent = "Stop $155.90  ·  " + (m <= NVDA.stop ? "at stop" : "$" + (m - NVDA.stop).toFixed(2) + " away");
+        document.getElementById("nvda-to-target").textContent = "Take-profit $161.00  ·  " + (m >= NVDA.target ? "at target" : "$" + (NVDA.target - m).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - NVDA.stop) / (NVDA.target - NVDA.stop) * 100));
+        document.getElementById("nvda-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("nvda-src").textContent = "NVDA mark unavailable, retrying…";
+      }
+    }
+    pollNvda();
+    setInterval(pollNvda, 5000);
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -896,7 +948,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl;
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -918,13 +970,13 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp);
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp));
+        levEl.classList.add(signClass(rp + nvdaPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
-        hit.textContent = "Trade closed at the $63,300 stop. No futures positions open.";
+        hit.textContent = "Trade closed at the $63,300 stop.";
         return;
       }
       if (mark == null || !isFinite(mark)) return;
