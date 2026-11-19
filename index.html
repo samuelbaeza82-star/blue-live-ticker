@@ -459,13 +459,13 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + live short P&amp;L</div>
+        <div class="sub">$50 start + realized short P&amp;L (no open futures)</div>
       </div>
     </section>
 
     <section class="card trade-card" id="card-short">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 2x short</div>
+        <div class="label">Closed trade · BTC 2x short · stopped out at $63,351 (10:36 PM CT Nov 18)</div>
         <div class="sub" id="mark-source">Waiting for mark price…</div>
       </div>
       <div id="short-pnl" class="pnl flat">$0.00</div>
@@ -480,7 +480,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="to-target">Target $61,750</span>
-        <span class="s" id="to-stop">Stop $64,150</span>
+        <span class="s" id="to-stop">Stop $63,300</span>
       </div>
       <div id="hit-note" class="hit"></div>
     </section>
@@ -582,7 +582,7 @@
   <script>
     // Practice positions as confirmed 4:51 PM CT, Nov 18, 2026.
     const POSITIONS = {
-      asOf: "4:51 PM CT on Nov 18",
+      asOf: "10:36 PM CT on Nov 18",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -590,10 +590,13 @@
         side: "short",
         size: 0.0015,
         entry: 63193,
-        stop: 64150,
+        stop: 63300,
         target: 61750,
         entryFee: 0.05,
-        leverage: 2
+        leverage: 2,
+        closed: true,
+        exit: 63350.96,
+        realized: -0.33
       },
       ethLong: {
         symbol: "ETH/USD",
@@ -854,6 +857,7 @@
 
     function shortPnl(mark) {
       const p = POSITIONS.short;
+      if (p.closed) return p.realized;
       return (p.entry - mark) * p.size - p.entryFee;
     }
 
@@ -908,6 +912,21 @@
       const markEl = document.getElementById("mark-price");
       const hit = document.getElementById("hit-note");
 
+      if (p.closed) {
+        const rp = p.realized;
+        pnlEl.textContent = moneySigned(rp) + " realized";
+        pnlEl.classList.remove("pos", "neg", "flat");
+        pnlEl.classList.add(signClass(rp));
+        renderCashAndCombined(rp);
+        levEl.textContent = money(POSITIONS.leverageStart + rp);
+        levEl.classList.remove("pos", "neg", "flat");
+        levEl.classList.add(signClass(rp));
+        src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
+        if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
+        hit.className = "hit show stop";
+        hit.textContent = "Trade closed at the $63,300 stop. No futures positions open.";
+        return;
+      }
       if (mark == null || !isFinite(mark)) return;
 
       const pnl = shortPnl(mark);
@@ -938,7 +957,7 @@
       document.getElementById("to-target").textContent =
         "Target $61,750  ·  " + (toTarget <= 0 ? "at target" : formatPrice(toTarget) + " to go");
       document.getElementById("to-stop").textContent =
-        "Stop $64,150  ·  " + (toStop <= 0 ? "at stop" : formatPrice(toStop) + " away");
+        "Stop $63,300  ·  " + (toStop <= 0 ? "at stop" : formatPrice(toStop) + " away");
 
       const span = p.stop - p.target;
       let pct = (mark - p.target) / span;
