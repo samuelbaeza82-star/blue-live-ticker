@@ -449,12 +449,12 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC short + realized BTC &amp; NVDA + live ETH &amp; XRP P&amp;L</div>
+        <div class="sub">$250 start + realized BTC, NVDA, ETH &amp; XRP</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
         <div id="cash" class="big flat">$200.00</div>
-        <div class="sub">$200 start + live ETH P&amp;L + live XRP P&amp;L</div>
+        <div class="sub">$200 start + realized ETH &amp; XRP P&amp;L</div>
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
@@ -508,15 +508,15 @@
 
     <section class="card trade-card" id="card-eth">
       <div class="trade-head">
-        <div class="label">Open trade · ETH long</div>
-        <div class="sub" id="eth-live-source">Waiting for ETH price…</div>
+        <div class="label">Closed trade · ETH long · sold at $1,788.30 (9:29 AM CT Nov 19)</div>
+        <div class="sub" id="eth-live-source">Closed · take profits on Blue's request</div>
       </div>
-      <div id="eth-pnl" class="pnl flat">$0.00</div>
-      <div class="sub" id="eth-pnl-note">Before fees</div>
+      <div id="eth-pnl" class="pnl pos">+$1.23</div>
+      <div class="sub" id="eth-pnl-note">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$1,750</b></span>
         <span>Size <b>0.04228997 ETH</b></span>
-        <span>Live <b id="eth-live-price">—</b></span>
+        <span>Exit <b id="eth-live-price">$1,788.30</b></span>
       </div>
       <div class="range long" aria-hidden="true">
         <div id="eth-range-mark" class="range-mark" style="left: 50%"></div>
@@ -530,15 +530,15 @@
 
     <section class="card trade-card" id="card-xrp">
       <div class="trade-head">
-        <div class="label">Open trade · XRP long</div>
-        <div class="sub" id="xrp-live-source">Waiting for XRP price…</div>
+        <div class="label">Closed trade · XRP long · sold at $0.9827 (9:29 AM CT Nov 19)</div>
+        <div class="sub" id="xrp-live-source">Closed · take profits on Blue's request</div>
       </div>
-      <div id="xrp-pnl" class="pnl flat">$0.00</div>
-      <div class="sub" id="xrp-pnl-note">Before fees</div>
+      <div id="xrp-pnl" class="pnl pos">+$1.56</div>
+      <div class="sub" id="xrp-pnl-note">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$0.9604</b></span>
         <span>Size <b>90.03536589 XRP</b></span>
-        <span>Live <b id="xrp-live-price">—</b></span>
+        <span>Exit <b id="xrp-live-price">$0.9827</b></span>
       </div>
       <div class="range long" aria-hidden="true">
         <div id="xrp-range-mark" class="range-mark" style="left: 50%"></div>
@@ -601,9 +601,9 @@
   </div>
 
   <script>
-    // Practice positions as confirmed 4:51 PM CT, Nov 18, 2026.
+    // Practice positions as confirmed 9:29 AM CT, Nov 19, 2026.
     const POSITIONS = {
-      asOf: "8:59 AM CT on Nov 19",
+      asOf: "9:29 AM CT on Nov 19",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -625,7 +625,10 @@
         size: 0.04228997,
         entry: 1750,
         stop: 1688,
-        target: 1864
+        target: 1864,
+        closed: true,
+        exit: 1788.29991,
+        realized: 1.23
       },
       xrpLong: {
         symbol: "XRP/USD",
@@ -633,7 +636,10 @@
         size: 90.03536589,
         entry: 0.9604,
         stop: 0.932,
-        target: 1.04
+        target: 1.04,
+        closed: true,
+        exit: 0.98273628,
+        realized: 1.56
       },
       waiting: []
     };
@@ -919,6 +925,7 @@
 
     function ethPnl(px) {
       const p = POSITIONS.ethLong;
+      if (p.closed) return p.realized;
       return (px - p.entry) * p.size;
     }
 
@@ -929,6 +936,7 @@
 
     function xrpPnl(px) {
       const p = POSITIONS.xrpLong;
+      if (p.closed) return p.realized;
       return (px - p.entry) * p.size;
     }
 
@@ -1034,6 +1042,17 @@
       const src = document.getElementById("eth-live-source");
       const pxEl = document.getElementById("eth-live-price");
       const hit = document.getElementById("eth-hit-note");
+      if (p.closed) {
+        pnlEl.textContent = moneySigned(p.realized);
+        pnlEl.classList.remove("pos", "neg", "flat");
+        pnlEl.classList.add(signClass(p.realized));
+        src.textContent = "Closed: sold at $1,788.30 (net incl. fees)";
+        pxEl.textContent = "$1,788.30";
+        const mark = state.mark;
+        const sPnl = (mark != null && isFinite(mark)) ? shortPnl(mark) : (POSITIONS.short.closed ? POSITIONS.short.realized : 0);
+        renderCashAndCombined(sPnl);
+        return;
+      }
       if (px == null) return;
 
       const pnl = ethPnl(px);
@@ -1086,6 +1105,17 @@
       const src = document.getElementById("xrp-live-source");
       const pxEl = document.getElementById("xrp-live-price");
       const hit = document.getElementById("xrp-hit-note");
+      if (p.closed) {
+        pnlEl.textContent = moneySigned(p.realized);
+        pnlEl.classList.remove("pos", "neg", "flat");
+        pnlEl.classList.add(signClass(p.realized));
+        src.textContent = "Closed: sold at $0.9827 (net incl. fees)";
+        pxEl.textContent = "$0.9827";
+        const mark = state.mark;
+        const sPnl = (mark != null && isFinite(mark)) ? shortPnl(mark) : (POSITIONS.short.closed ? POSITIONS.short.realized : 0);
+        renderCashAndCombined(sPnl);
+        return;
+      }
       if (px == null) return;
 
       const pnl = xrpPnl(px);
