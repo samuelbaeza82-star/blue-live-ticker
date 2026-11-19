@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC, NVDA, ETH &amp; XRP</div>
+        <div class="sub">$250 start + realized BTC, NVDA, QQQ, ETH &amp; XRP + open GOOGL</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC short &amp; NVDA long + open QQQ long</div>
+        <div class="sub">$50 start + realized BTC, NVDA &amp; QQQ + open GOOGL short</div>
       </div>
     </section>
 
@@ -485,17 +485,38 @@
       <div id="hit-note" class="hit"></div>
     </section>
 
+    <section class="card trade-card" id="card-googl">
+      <div class="trade-head">
+        <div class="label">Open trade · GOOGL 3x short · opened $285.40 (10:59 AM CT Nov 19)</div>
+        <div class="sub" id="googl-src">Waiting for GOOGLx mark…</div>
+      </div>
+      <div id="googl-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Unrealized, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$285.40</b></span>
+        <span>Size <b>0.25 GOOGLx</b></span>
+        <span>Mark <b id="googl-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="googl-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="googl-to-target">Take-profit $278.80</span>
+        <span class="s" id="googl-to-stop">Stop $288.70</span>
+      </div>
+    </section>
+
     <section class="card trade-card" id="card-qqq">
       <div class="trade-head">
-        <div class="label">Open trade · QQQ 3x long · opened $665.10 (10:38 AM CT Nov 19)</div>
-        <div class="sub" id="qqq-src">Waiting for QQQx mark…</div>
+        <div class="label">Closed trade · QQQ 3x long · stopped out at $658.60 (10:56 AM CT Nov 19)</div>
+        <div class="sub" id="qqq-src">Closed · stop triggered</div>
       </div>
-      <div id="qqq-pnl" class="pnl flat">$0.00</div>
-      <div class="sub">Unrealized, after entry fee</div>
+      <div id="qqq-pnl" class="pnl neg">-$1.07</div>
+      <div class="sub">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$665.10</b></span>
         <span>Size <b>0.15 QQQx</b></span>
-        <span>Mark <b id="qqq-mark">—</b></span>
+        <span>Exit <b id="qqq-mark">$658.60</b></span>
       </div>
       <div class="range long" aria-hidden="true">
         <div id="qqq-range-mark" class="range-mark" style="left: 50%"></div>
@@ -571,15 +592,7 @@
       <div id="xrp-hit-note" class="hit"></div>
     </section>
 
-    <section class="waiting" id="waiting-section">
-      <div class="card" id="card-waiting-empty">
-        <span class="wait-tag">Waiting to fill</span>
-        <div class="px-sym">
-          <span class="name">AMZNx limit buy 0.14 @ $267.50</span>
-        </div>
-        <div class="sub">Stop $262.50 · take-profit $275 once filled (placed 9:38 PM CT Nov 18)</div>
-      </div>
-    </section>
+    <section class="waiting" id="waiting-section"></section>
 
     <section class="prices">
       <div class="card px" id="card-BTC/USD">
@@ -622,9 +635,9 @@
   </div>
 
   <script>
-    // Practice positions as confirmed 9:29 AM CT, Nov 19, 2026.
+    // Practice positions as confirmed 10:59 AM CT, Nov 19, 2026.
     const POSITIONS = {
-      asOf: "9:29 AM CT on Nov 19",
+      asOf: "10:59 AM CT on Nov 19",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -696,7 +709,7 @@
     if (!NVDA.closed) { pollNvda(); setInterval(pollNvda, 5000); }
 
     // QQQ 3x futures long, opened 10:38 AM CT Nov 19, 2026 (practice).
-    const QQQ = { entry: 665.1, size: 0.15, stop: 661.0, target: 673.3, fee: 0.05, closed: false, exit: null, realized: 0 };
+    const QQQ = { entry: 665.1, size: 0.15, stop: 661.0, target: 673.3, fee: 0.05, closed: true, exit: 658.60, realized: -1.07 };
     let qqqMark = null;
     function qqqPnl() { if (QQQ.closed) return QQQ.realized; return qqqMark == null ? -QQQ.fee : (qqqMark - QQQ.entry) * QQQ.size - QQQ.fee; }
     async function pollQqq() {
@@ -724,6 +737,36 @@
       }
     }
     if (!QQQ.closed) { pollQqq(); setInterval(pollQqq, 5000); }
+
+    // GOOGL 3x futures short, opened 10:59 AM CT Nov 19, 2026 (practice).
+    const GOOGL = { entry: 285.40, size: 0.25, stop: 288.70, target: 278.80, fee: 0.04, closed: false, exit: null, realized: 0 };
+    let googlMark = null;
+    function googlPnl() { if (GOOGL.closed) return GOOGL.realized; return googlMark == null ? -GOOGL.fee : (GOOGL.entry - googlMark) * GOOGL.size - GOOGL.fee; }
+    async function pollGoogl() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_GOOGLXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        googlMark = m;
+        const pnl = googlPnl();
+        const el = document.getElementById("googl-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("googl-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("googl-src").textContent = "Kraken GOOGLx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("googl-to-stop").textContent = "Stop $288.70  ·  " + (m >= GOOGL.stop ? "at stop" : "$" + (GOOGL.stop - m).toFixed(2) + " away");
+        document.getElementById("googl-to-target").textContent = "Take-profit $278.80  ·  " + (m <= GOOGL.target ? "at target" : "$" + (m - GOOGL.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - GOOGL.target) / (GOOGL.stop - GOOGL.target) * 100));
+        document.getElementById("googl-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("googl-src").textContent = "GOOGL mark unavailable, retrying…";
+      }
+    }
+    if (!GOOGL.closed) { pollGoogl(); setInterval(pollGoogl, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1006,7 +1049,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1028,9 +1071,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1051,7 +1094,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
