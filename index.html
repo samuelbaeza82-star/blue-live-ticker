@@ -425,7 +425,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>8:10 PM CT on Nov 19</strong>.
+          Positions are as of <strong>2:44 PM CT on Nov 20</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           The full dashboard updates every 2 hours, while this page ticks live.
         </p>
@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC (x2), NVDA, QQQ, GOOGL, MSTR, ETH (x2) &amp; XRP + open NVDA &amp; HOOD shorts</div>
+        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x2) &amp; XRP · no open trades</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA, QQQ, GOOGL &amp; MSTR + open NVDA &amp; HOOD shorts</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR &amp; HOOD · $53.91 at 2:44 PM CT Nov 20</div>
       </div>
     </section>
 
@@ -508,43 +508,43 @@
 
     <section class="card trade-card" id="card-hood">
       <div class="trade-head">
-        <div class="label">Open trade · HOOD 3x short · filled $64.58 (10:43 AM CT Nov 20)</div>
-        <div class="sub" id="hood-src">Waiting for HOOD mark…</div>
+        <div class="label">Closed trade · HOOD 3x short · take-profit hit at $63.00 (confirmed 2:42 PM CT Nov 20)</div>
+        <div class="sub" id="hood-src">Closed · target hit</div>
       </div>
-      <div id="hood-pnl" class="pnl flat">$0.00</div>
-      <div class="sub">Unrealized, after entry fee</div>
+      <div id="hood-pnl" class="pnl pos">+$1.21</div>
+      <div class="sub">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$64.58</b></span>
         <span>Size <b>0.8 HOODx</b></span>
-        <span>Mark <b id="hood-mark">—</b></span>
+        <span>Exit <b id="hood-mark">$63.00</b></span>
       </div>
       <div class="range" aria-hidden="true">
-        <div id="hood-range-mark" class="range-mark" style="left: 50%"></div>
+        <div id="hood-range-mark" class="range-mark" style="left: 0%"></div>
       </div>
       <div class="range-labels">
         <span class="t" id="hood-to-target">Take-profit $63.00</span>
-        <span class="s" id="hood-to-stop">Stop $64.95 (trailed from $65.55, 12:45 PM CT)</span>
+        <span class="s" id="hood-to-stop">Stop $64.95</span>
       </div>
     </section>
 
     <section class="card trade-card" id="card-nvda2">
       <div class="trade-head">
-        <div class="label">Open trade · NVDA 3x short · filled $139.51 (8:41 AM CT Nov 20)</div>
-        <div class="sub" id="nvda2-src">Waiting for NVDA mark…</div>
+        <div class="label">Closed trade · NVDA 3x short · take-profit hit at $135.30 (confirmed 2:42 PM CT Nov 20)</div>
+        <div class="sub" id="nvda2-src">Closed · target hit</div>
       </div>
-      <div id="nvda2-pnl" class="pnl flat">$0.00</div>
-      <div class="sub">Unrealized, after entry fee</div>
+      <div id="nvda2-pnl" class="pnl pos">+$2.04</div>
+      <div class="sub">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$139.51</b></span>
         <span>Size <b>0.5 NVDAx</b></span>
-        <span>Mark <b id="nvda2-mark">—</b></span>
+        <span>Exit <b id="nvda2-mark">$135.30</b></span>
       </div>
       <div class="range" aria-hidden="true">
-        <div id="nvda2-range-mark" class="range-mark" style="left: 50%"></div>
+        <div id="nvda2-range-mark" class="range-mark" style="left: 0%"></div>
       </div>
       <div class="range-labels">
         <span class="t" id="nvda2-to-target">Take-profit $135.30</span>
-        <span class="s" id="nvda2-to-stop">Stop $137.10 (trailed from $140.00, 12:45 PM CT)</span>
+        <span class="s" id="nvda2-to-stop">Stop $137.10</span>
       </div>
     </section>
 
@@ -735,9 +735,9 @@
   </div>
 
   <script>
-    // Practice positions as confirmed 10:44 AM CT, Nov 20, 2026.
+    // Practice positions as confirmed 2:44 PM CT, Nov 20, 2026.
     const POSITIONS = {
-      asOf: "10:44 AM CT on Nov 20",
+      asOf: "2:44 PM CT on Nov 20",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -929,7 +929,7 @@
     if (!BTC2.closed) { pollBtc2(); setInterval(pollBtc2, 5000); }
 
     // NVDA 3x futures short, filled $139.51 at 8:41 AM CT Nov 20, 2026 (practice). Stop trailed 141.65 -> 140.00 at 10:43 AM CT.
-    const NVDA2 = { entry: 139.51, size: 0.5, stop: 137.10, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
+    const NVDA2 = { entry: 139.51, size: 0.5, stop: 137.10, target: 135.30, fee: 0.03, closed: true, exit: 135.30, realized: 2.04 };
     let nvda2Mark = null;
     function nvda2Pnl() { if (NVDA2.closed) return NVDA2.realized; return nvda2Mark == null ? -NVDA2.fee : (NVDA2.entry - nvda2Mark) * NVDA2.size - NVDA2.fee; }
     async function pollNvda2() {
@@ -959,7 +959,7 @@
     if (!NVDA2.closed) { pollNvda2(); setInterval(pollNvda2, 5000); }
 
     // HOOD 3x futures short, filled $64.58 at 10:43 AM CT Nov 20, 2026 (practice). Stop FP-00051 65.55 mark, TP FP-00052 63.00.
-    const HOOD = { entry: 64.58, size: 0.8, stop: 64.95, target: 63.00, fee: 0.026, closed: false, exit: null, realized: 0 };
+    const HOOD = { entry: 64.58, size: 0.8, stop: 64.95, target: 63.00, fee: 0.026, closed: true, exit: 63.00, realized: 1.21 };
     let hoodMark = null;
     function hoodPnl() { if (HOOD.closed) return HOOD.realized; return hoodMark == null ? -HOOD.fee : (HOOD.entry - hoodMark) * HOOD.size - HOOD.fee; }
     async function pollHood() {
