@@ -947,7 +947,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("nvda2-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("nvda2-src").textContent = "Kraken NVDAx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("nvda2-to-stop").textContent = "Stop $140.00  ·  " + (m >= NVDA2.stop ? "at stop" : "$" + (NVDA2.stop - m).toFixed(2) + " away");
+        document.getElementById("nvda2-to-stop").textContent = "Stop $137.10  ·  " + (m >= NVDA2.stop ? "at stop" : "$" + (NVDA2.stop - m).toFixed(2) + " away");
         document.getElementById("nvda2-to-target").textContent = "Take-profit $135.30  ·  " + (m <= NVDA2.target ? "at target" : "$" + (m - NVDA2.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - NVDA2.target) / (NVDA2.stop - NVDA2.target) * 100));
         document.getElementById("nvda2-range-mark").style.left = pct + "%";
