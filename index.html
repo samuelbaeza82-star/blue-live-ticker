@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC, NVDA, QQQ, GOOGL, MSTR, ETH &amp; XRP + open BTC short</div>
+        <div class="sub">$250 start + realized BTC, NVDA, QQQ, GOOGL, MSTR, ETH &amp; XRP + open BTC &amp; NVDA shorts</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC, NVDA, QQQ, GOOGL &amp; MSTR + open BTC short</div>
+        <div class="sub">$50 start + realized BTC, NVDA, QQQ, GOOGL &amp; MSTR + open BTC &amp; NVDA shorts</div>
       </div>
     </section>
 
@@ -503,6 +503,27 @@
       <div class="range-labels">
         <span class="t" id="googl-to-target">Take-profit $278.80</span>
         <span class="s" id="googl-to-stop">Stop $282.80</span>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-nvda2">
+      <div class="trade-head">
+        <div class="label">Open trade · NVDA 3x short · filled $139.51 (8:41 AM CT Nov 20)</div>
+        <div class="sub" id="nvda2-src">Waiting for NVDA mark…</div>
+      </div>
+      <div id="nvda2-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Unrealized, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$139.51</b></span>
+        <span>Size <b>0.5 NVDAx</b></span>
+        <span>Mark <b id="nvda2-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="nvda2-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="nvda2-to-target">Take-profit $135.30</span>
+        <span class="s" id="nvda2-to-stop">Stop $141.65</span>
       </div>
     </section>
 
@@ -878,6 +899,36 @@
     }
     if (!BTC2.closed) { pollBtc2(); setInterval(pollBtc2, 5000); }
 
+    // NVDA 3x futures short, filled $139.51 at 8:41 AM CT Nov 20, 2026 (practice).
+    const NVDA2 = { entry: 139.51, size: 0.5, stop: 141.65, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
+    let nvda2Mark = null;
+    function nvda2Pnl() { if (NVDA2.closed) return NVDA2.realized; return nvda2Mark == null ? -NVDA2.fee : (NVDA2.entry - nvda2Mark) * NVDA2.size - NVDA2.fee; }
+    async function pollNvda2() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_NVDAXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        nvda2Mark = m;
+        const pnl = nvda2Pnl();
+        const el = document.getElementById("nvda2-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("nvda2-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("nvda2-src").textContent = "Kraken NVDAx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("nvda2-to-stop").textContent = "Stop $141.65  ·  " + (m >= NVDA2.stop ? "at stop" : "$" + (NVDA2.stop - m).toFixed(2) + " away");
+        document.getElementById("nvda2-to-target").textContent = "Take-profit $135.30  ·  " + (m <= NVDA2.target ? "at target" : "$" + (m - NVDA2.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - NVDA2.target) / (NVDA2.stop - NVDA2.target) * 100));
+        document.getElementById("nvda2-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("nvda2-src").textContent = "NVDA mark unavailable, retrying…";
+      }
+    }
+    if (!NVDA2.closed) { pollNvda2(); setInterval(pollNvda2, 5000); }
+
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
     const SPOT_SYMBOLS = ["BTC/USD", "ETH/USD", "XRP/USD", "SOL/USD"];
@@ -1159,7 +1210,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1181,9 +1232,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1204,7 +1255,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
