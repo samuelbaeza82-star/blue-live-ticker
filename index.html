@@ -425,7 +425,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>12:02 PM CT on Nov 19</strong>.
+          Positions are as of <strong>8:10 PM CT on Nov 19</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           The full dashboard updates every 2 hours, while this page ticks live.
         </p>
@@ -613,7 +613,22 @@
       <div id="xrp-hit-note" class="hit"></div>
     </section>
 
-    <section class="waiting" id="waiting-section"></section>
+    <section class="waiting" id="waiting-section">
+      <div class="card" id="card-btc-limit">
+        <span class="wait-tag">Waiting to fill</span>
+        <div class="px-sym">
+          <span class="name">BTC 3x short limit 0.001 @ $62,200</span>
+        </div>
+        <div class="sub">Stop $62,800 · take-profit $61,000 once filled (placed 8:10 PM CT Nov 19)</div>
+      </div>
+      <div class="card" id="card-eth-limit">
+        <span class="wait-tag">Waiting to fill</span>
+        <div class="px-sym">
+          <span class="name">ETH limit buy 0.07 @ $1,712</span>
+        </div>
+        <div class="sub">Stop $1,680 · take-profit $1,780 once filled; cancel if $1,710 breaks (placed 8:10 PM CT Nov 19)</div>
+      </div>
+    </section>
 
     <section class="prices">
       <div class="card px" id="card-BTC/USD">
