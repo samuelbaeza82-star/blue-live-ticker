@@ -449,17 +449,17 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC, NVDA, QQQ, GOOGL, MSTR, ETH &amp; XRP + open BTC &amp; NVDA shorts</div>
+        <div class="sub">$250 start + realized BTC (x2), NVDA, QQQ, GOOGL, MSTR, ETH (x2) &amp; XRP + open NVDA &amp; HOOD shorts</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
         <div id="cash" class="big flat">$200.00</div>
-        <div class="sub">$200 start + realized ETH &amp; XRP P&amp;L</div>
+        <div class="sub">$200 start + realized ETH (x2) &amp; XRP P&amp;L · $197.08 at 10:44 AM CT Nov 20</div>
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC, NVDA, QQQ, GOOGL &amp; MSTR + open BTC &amp; NVDA shorts</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA, QQQ, GOOGL &amp; MSTR + open NVDA &amp; HOOD shorts</div>
       </div>
     </section>
 
@@ -506,6 +506,27 @@
       </div>
     </section>
 
+    <section class="card trade-card" id="card-hood">
+      <div class="trade-head">
+        <div class="label">Open trade · HOOD 3x short · filled $64.58 (10:43 AM CT Nov 20)</div>
+        <div class="sub" id="hood-src">Waiting for HOOD mark…</div>
+      </div>
+      <div id="hood-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Unrealized, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$64.58</b></span>
+        <span>Size <b>0.8 HOODx</b></span>
+        <span>Mark <b id="hood-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="hood-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="hood-to-target">Take-profit $63.00</span>
+        <span class="s" id="hood-to-stop">Stop $65.55</span>
+      </div>
+    </section>
+
     <section class="card trade-card" id="card-nvda2">
       <div class="trade-head">
         <div class="label">Open trade · NVDA 3x short · filled $139.51 (8:41 AM CT Nov 20)</div>
@@ -523,24 +544,24 @@
       </div>
       <div class="range-labels">
         <span class="t" id="nvda2-to-target">Take-profit $135.30</span>
-        <span class="s" id="nvda2-to-stop">Stop $141.65</span>
+        <span class="s" id="nvda2-to-stop">Stop $140.00 (trailed from $141.65, 10:43 AM CT)</span>
       </div>
     </section>
 
     <section class="card trade-card" id="card-btc2">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 3x short · filled $62,200 (confirmed 4:46 AM CT Nov 20)</div>
-        <div class="sub" id="btc2-src">Waiting for BTC mark…</div>
+        <div class="label">Closed trade · BTC 3x short · take-profit hit at $61,000 (confirmed 10:41 AM CT Nov 20)</div>
+        <div class="sub" id="btc2-src">Closed · target hit</div>
       </div>
-      <div id="btc2-pnl" class="pnl flat">$0.00</div>
-      <div class="sub">Unrealized, after entry fee</div>
+      <div id="btc2-pnl" class="pnl pos">+$1.14</div>
+      <div class="sub">Realized, after fees</div>
       <div class="meta">
         <span>Entry <b>$62,200</b></span>
         <span>Size <b>0.001 BTC</b></span>
-        <span>Mark <b id="btc2-mark">—</b></span>
+        <span>Exit <b id="btc2-mark">$61,000</b></span>
       </div>
       <div class="range" aria-hidden="true">
-        <div id="btc2-range-mark" class="range-mark" style="left: 50%"></div>
+        <div id="btc2-range-mark" class="range-mark" style="left: 0%"></div>
       </div>
       <div class="range-labels">
         <span class="t" id="btc2-to-target">Take-profit $61,000</span>
@@ -655,13 +676,21 @@
       <div id="xrp-hit-note" class="hit"></div>
     </section>
 
-    <section class="waiting" id="waiting-section">
-      <div class="card" id="card-eth-limit">
-        <span class="wait-tag">Waiting to fill</span>
-        <div class="px-sym">
-          <span class="name">ETH limit buy 0.07 @ $1,712</span>
-        </div>
-        <div class="sub">Stop $1,680 · take-profit $1,780 once filled; cancel if $1,710 breaks (placed 8:10 PM CT Nov 19)</div>
+    <section class="card trade-card" id="card-eth2">
+      <div class="trade-head">
+        <div class="label">Closed trade · ETH long · limit filled $1,712, stop-sold at $1,639.15 (10:42 AM CT Nov 20)</div>
+        <div class="sub">Closed · fill reconciled late during crypto flush; ETH already below the $1,680 stop</div>
+      </div>
+      <div id="eth2-pnl" class="pnl neg">-$5.71</div>
+      <div class="sub">Realized, after fees</div>
+      <div class="meta">
+        <span>Entry <b>$1,712</b></span>
+        <span>Size <b>0.07 ETH</b></span>
+        <span>Exit <b>$1,639.15</b></span>
+      </div>
+      <div class="range-labels">
+        <span class="s">Stop $1,680</span>
+        <span class="t">Take-profit $1,780</span>
       </div>
     </section>
 
@@ -706,9 +735,9 @@
   </div>
 
   <script>
-    // Practice positions as confirmed 10:59 AM CT, Nov 19, 2026.
+    // Practice positions as confirmed 10:44 AM CT, Nov 20, 2026.
     const POSITIONS = {
-      asOf: "10:59 AM CT on Nov 19",
+      asOf: "10:44 AM CT on Nov 20",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -869,8 +898,8 @@
     }
     if (!MSTR.closed) { pollMstr(); setInterval(pollMstr, 5000); }
 
-    // BTC 3x futures short, limit filled $62,200 (confirmed 4:46 AM CT Nov 20, 2026, practice).
-    const BTC2 = { entry: 62200, size: 0.001, stop: 62800, target: 61000, fee: 0.03, closed: false, exit: null, realized: 0 };
+    // BTC 3x futures short, limit filled $62,200 (confirmed 4:46 AM CT Nov 20, 2026, practice). TP filled 61000, closed 10:41 AM CT (net +1.14).
+    const BTC2 = { entry: 62200, size: 0.001, stop: 62800, target: 61000, fee: 0.03, closed: true, exit: 61000, realized: 1.14 };
     let btc2Mark = null;
     function btc2Pnl() { if (BTC2.closed) return BTC2.realized; return btc2Mark == null ? -BTC2.fee : (BTC2.entry - btc2Mark) * BTC2.size - BTC2.fee; }
     async function pollBtc2() {
@@ -899,8 +928,8 @@
     }
     if (!BTC2.closed) { pollBtc2(); setInterval(pollBtc2, 5000); }
 
-    // NVDA 3x futures short, filled $139.51 at 8:41 AM CT Nov 20, 2026 (practice).
-    const NVDA2 = { entry: 139.51, size: 0.5, stop: 141.65, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
+    // NVDA 3x futures short, filled $139.51 at 8:41 AM CT Nov 20, 2026 (practice). Stop trailed 141.65 -> 140.00 at 10:43 AM CT.
+    const NVDA2 = { entry: 139.51, size: 0.5, stop: 140.00, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
     let nvda2Mark = null;
     function nvda2Pnl() { if (NVDA2.closed) return NVDA2.realized; return nvda2Mark == null ? -NVDA2.fee : (NVDA2.entry - nvda2Mark) * NVDA2.size - NVDA2.fee; }
     async function pollNvda2() {
@@ -918,7 +947,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("nvda2-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("nvda2-src").textContent = "Kraken NVDAx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("nvda2-to-stop").textContent = "Stop $141.65  ·  " + (m >= NVDA2.stop ? "at stop" : "$" + (NVDA2.stop - m).toFixed(2) + " away");
+        document.getElementById("nvda2-to-stop").textContent = "Stop $140.00  ·  " + (m >= NVDA2.stop ? "at stop" : "$" + (NVDA2.stop - m).toFixed(2) + " away");
         document.getElementById("nvda2-to-target").textContent = "Take-profit $135.30  ·  " + (m <= NVDA2.target ? "at target" : "$" + (m - NVDA2.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - NVDA2.target) / (NVDA2.stop - NVDA2.target) * 100));
         document.getElementById("nvda2-range-mark").style.left = pct + "%";
@@ -928,6 +957,36 @@
       }
     }
     if (!NVDA2.closed) { pollNvda2(); setInterval(pollNvda2, 5000); }
+
+    // HOOD 3x futures short, filled $64.58 at 10:43 AM CT Nov 20, 2026 (practice). Stop FP-00051 65.55 mark, TP FP-00052 63.00.
+    const HOOD = { entry: 64.58, size: 0.8, stop: 65.55, target: 63.00, fee: 0.026, closed: false, exit: null, realized: 0 };
+    let hoodMark = null;
+    function hoodPnl() { if (HOOD.closed) return HOOD.realized; return hoodMark == null ? -HOOD.fee : (HOOD.entry - hoodMark) * HOOD.size - HOOD.fee; }
+    async function pollHood() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_HOODXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        hoodMark = m;
+        const pnl = hoodPnl();
+        const el = document.getElementById("hood-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("hood-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("hood-src").textContent = "Kraken HOODx perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("hood-to-stop").textContent = "Stop $65.55  ·  " + (m >= HOOD.stop ? "at stop" : "$" + (HOOD.stop - m).toFixed(2) + " away");
+        document.getElementById("hood-to-target").textContent = "Take-profit $63.00  ·  " + (m <= HOOD.target ? "at target" : "$" + (m - HOOD.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - HOOD.target) / (HOOD.stop - HOOD.target) * 100));
+        document.getElementById("hood-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("hood-src").textContent = "HOOD mark unavailable, retrying…";
+      }
+    }
+    if (!HOOD.closed) { pollHood(); setInterval(pollHood, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1195,10 +1254,12 @@
       return (px - p.entry) * p.size;
     }
 
+    // ETH spot long #2: limit 0.07 @1712 filled (reconciled 10:41 AM CT Nov 20), stop-sold @1639.15 at 10:42. Net -5.71 incl fees.
+    const ETH2 = { entry: 1712, size: 0.07, stop: 1680, target: 1780, closed: true, exit: 1639.15, realized: -5.71 };
     function cashLivePnl() {
       const ePx = currentEthPx();
       const xPx = currentXrpPx();
-      return (ePx != null ? ethPnl(ePx) : 0) + (xPx != null ? xrpPnl(xPx) : 0);
+      return (ePx != null ? ethPnl(ePx) : 0) + (xPx != null ? xrpPnl(xPx) : 0) + ETH2.realized;
     }
 
     function renderCashAndCombined(sPnl) {
@@ -1210,7 +1271,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1232,9 +1293,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1255,7 +1316,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
