@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x2) &amp; XRP · no open trades</div>
+        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x2) &amp; XRP · open: ETH 3x short</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,28 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR &amp; HOOD · $53.91 at 2:44 PM CT Nov 20</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR &amp; HOOD · $53.86 collateral at 4:44 PM CT Nov 20 · open: ETH 3x short</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-eths">
+      <div class="trade-head">
+        <div class="label">Open trade · ETH 3x short · filled $1,623.20 at 4:44 PM CT Nov 20</div>
+        <div class="sub" id="eths-src">Waiting for ETH mark…</div>
+      </div>
+      <div id="eths-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$1,623.20</b></span>
+        <span>Size <b>0.06 ETH</b></span>
+        <span>Mark <b id="eths-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="eths-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="eths-to-target">Take-profit $1,580</span>
+        <span class="s" id="eths-to-stop">Stop $1,646</span>
       </div>
     </section>
 
@@ -735,9 +756,9 @@
   </div>
 
   <script>
-    // Practice positions as confirmed 2:44 PM CT, Nov 20, 2026.
+    // Practice positions as confirmed 4:44 PM CT, Nov 20, 2026.
     const POSITIONS = {
-      asOf: "2:44 PM CT on Nov 20",
+      asOf: "4:44 PM CT on Nov 20",
       cashStart: 200,
       leverageStart: 50,
       short: {
@@ -987,6 +1008,36 @@
       }
     }
     if (!HOOD.closed) { pollHood(); setInterval(pollHood, 5000); }
+
+    // ETH 3x futures short, filled $1,623.20 at 4:44 PM CT Nov 20, 2026 (practice). Stop FP-00061 1646 mark, TP FP-00062 1580.
+    const ETHS = { entry: 1623.2, size: 0.06, stop: 1646, target: 1580, fee: 0.049, closed: false, exit: null, realized: null };
+    let ethsMark = null;
+    function ethsPnl() { if (ETHS.closed) return ETHS.realized; return ethsMark == null ? -ETHS.fee : (ETHS.entry - ethsMark) * ETHS.size - ETHS.fee; }
+    async function pollEths() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_ETHUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        ethsMark = m;
+        const pnl = ethsPnl();
+        const el = document.getElementById("eths-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("eths-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("eths-src").textContent = "Kraken ETH perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("eths-to-stop").textContent = "Stop $1,646  ·  " + (m >= ETHS.stop ? "at stop" : "$" + (ETHS.stop - m).toFixed(2) + " away");
+        document.getElementById("eths-to-target").textContent = "Take-profit $1,580  ·  " + (m <= ETHS.target ? "at target" : "$" + (m - ETHS.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - ETHS.target) / (ETHS.stop - ETHS.target) * 100));
+        document.getElementById("eths-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("eths-src").textContent = "ETH mark unavailable, retrying…";
+      }
+    }
+    if (!ETHS.closed) { pollEths(); setInterval(pollEths, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1271,7 +1322,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1293,9 +1344,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1316,7 +1367,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
