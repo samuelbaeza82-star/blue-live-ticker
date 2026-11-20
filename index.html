@@ -523,7 +523,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="mstr-to-target">Take-profit $83.85</span>
-        <span class="s" id="mstr-to-stop">Stop $87.20</span>
+        <span class="s" id="mstr-to-stop">Stop $86.00</span>
       </div>
     </section>
 
@@ -805,7 +805,7 @@
     if (!GOOGL.closed) { pollGoogl(); setInterval(pollGoogl, 5000); }
 
     // MSTR 3x futures short, opened 12:02 PM CT Nov 19, 2026 (practice).
-    const MSTR = { entry: 87.92, size: 0.7, stop: 87.20, target: 83.85, fee: 0.03, closed: false, exit: null, realized: 0 };
+    const MSTR = { entry: 87.92, size: 0.7, stop: 86.00, target: 83.85, fee: 0.03, closed: false, exit: null, realized: 0 };
     let mstrMark = null;
     function mstrPnl() { if (MSTR.closed) return MSTR.realized; return mstrMark == null ? -MSTR.fee : (MSTR.entry - mstrMark) * MSTR.size - MSTR.fee; }
     async function pollMstr() {
@@ -823,7 +823,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("mstr-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("mstr-src").textContent = "Kraken MSTRx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("mstr-to-stop").textContent = "Stop $87.20  ·  " + (m >= MSTR.stop ? "at stop" : "$" + (MSTR.stop - m).toFixed(2) + " away");
+        document.getElementById("mstr-to-stop").textContent = "Stop $86.00  ·  " + (m >= MSTR.stop ? "at stop" : "$" + (MSTR.stop - m).toFixed(2) + " away");
         document.getElementById("mstr-to-target").textContent = "Take-profit $83.85  ·  " + (m <= MSTR.target ? "at target" : "$" + (m - MSTR.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - MSTR.target) / (MSTR.stop - MSTR.target) * 100));
         document.getElementById("mstr-range-mark").style.left = pct + "%";
