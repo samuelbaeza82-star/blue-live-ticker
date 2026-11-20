@@ -523,7 +523,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="hood-to-target">Take-profit $63.00</span>
-        <span class="s" id="hood-to-stop">Stop $65.55</span>
+        <span class="s" id="hood-to-stop">Stop $64.95 (trailed from $65.55, 12:45 PM CT)</span>
       </div>
     </section>
 
@@ -544,7 +544,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="nvda2-to-target">Take-profit $135.30</span>
-        <span class="s" id="nvda2-to-stop">Stop $140.00 (trailed from $141.65, 10:43 AM CT)</span>
+        <span class="s" id="nvda2-to-stop">Stop $137.10 (trailed from $140.00, 12:45 PM CT)</span>
       </div>
     </section>
 
@@ -929,7 +929,7 @@
     if (!BTC2.closed) { pollBtc2(); setInterval(pollBtc2, 5000); }
 
     // NVDA 3x futures short, filled $139.51 at 8:41 AM CT Nov 20, 2026 (practice). Stop trailed 141.65 -> 140.00 at 10:43 AM CT.
-    const NVDA2 = { entry: 139.51, size: 0.5, stop: 140.00, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
+    const NVDA2 = { entry: 139.51, size: 0.5, stop: 137.10, target: 135.30, fee: 0.03, closed: false, exit: null, realized: 0 };
     let nvda2Mark = null;
     function nvda2Pnl() { if (NVDA2.closed) return NVDA2.realized; return nvda2Mark == null ? -NVDA2.fee : (NVDA2.entry - nvda2Mark) * NVDA2.size - NVDA2.fee; }
     async function pollNvda2() {
@@ -959,7 +959,7 @@
     if (!NVDA2.closed) { pollNvda2(); setInterval(pollNvda2, 5000); }
 
     // HOOD 3x futures short, filled $64.58 at 10:43 AM CT Nov 20, 2026 (practice). Stop FP-00051 65.55 mark, TP FP-00052 63.00.
-    const HOOD = { entry: 64.58, size: 0.8, stop: 65.55, target: 63.00, fee: 0.026, closed: false, exit: null, realized: 0 };
+    const HOOD = { entry: 64.58, size: 0.8, stop: 64.95, target: 63.00, fee: 0.026, closed: false, exit: null, realized: 0 };
     let hoodMark = null;
     function hoodPnl() { if (HOOD.closed) return HOOD.realized; return hoodMark == null ? -HOOD.fee : (HOOD.entry - hoodMark) * HOOD.size - HOOD.fee; }
     async function pollHood() {
@@ -977,7 +977,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("hood-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("hood-src").textContent = "Kraken HOODx perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("hood-to-stop").textContent = "Stop $65.55  ·  " + (m >= HOOD.stop ? "at stop" : "$" + (HOOD.stop - m).toFixed(2) + " away");
+        document.getElementById("hood-to-stop").textContent = "Stop $64.95  ·  " + (m >= HOOD.stop ? "at stop" : "$" + (HOOD.stop - m).toFixed(2) + " away");
         document.getElementById("hood-to-target").textContent = "Take-profit $63.00  ·  " + (m <= HOOD.target ? "at target" : "$" + (m - HOOD.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - HOOD.target) / (HOOD.stop - HOOD.target) * 100));
         document.getElementById("hood-range-mark").style.left = pct + "%";
