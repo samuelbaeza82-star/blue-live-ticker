@@ -459,13 +459,29 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short · $56.36 collateral at 4:37 AM CT Nov 21 · open: SOL short $67.00 &amp; BTC short $57,600</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short, SOL &amp; BTC short stops · $53.84 collateral at 6:40 AM CT Nov 21 · resting: BTC short $60,000 &amp; ETH short $1,700</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-resting-1121">
+      <div class="trade-head">
+        <div class="label">Resting orders · placed 6:40 AM CT Nov 21 (3x shorts, not filled yet)</div>
+      </div>
+      <div class="meta">
+        <span>BTC short <b>0.001 @ $60,000</b></span>
+        <span>Stop <b>$60,800</b></span>
+        <span>Target <b>$58,300</b></span>
+      </div>
+      <div class="meta">
+        <span>ETH short <b>0.05 @ $1,700</b></span>
+        <span>Stop <b>$1,725</b></span>
+        <span>Target <b>$1,640</b></span>
       </div>
     </section>
 
     <section class="card trade-card" id="card-btcs3">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 3x short · filled $57,600 at 4:37 AM CT Nov 21</div>
+        <div class="label">Closed trade · BTC 3x short · $57,600 → stopped $58,856 (6:37 AM CT Nov 21)</div>
         <div class="sub" id="btcs3-src">Waiting for BTC mark…</div>
       </div>
       <div id="btcs3-pnl" class="pnl flat">$0.00</div>
@@ -486,7 +502,7 @@
 
     <section class="card trade-card" id="card-sols">
       <div class="trade-head">
-        <div class="label">Open trade · SOL 3x short · filled $67.00 at 12:45 AM CT Nov 21</div>
+        <div class="label">Closed trade · SOL 3x short · $67.00 → stopped $69.44 (6:37 AM CT Nov 21)</div>
         <div class="sub" id="sols-src">Waiting for SOL mark…</div>
       </div>
       <div id="sols-pnl" class="pnl flat">$0.00</div>
@@ -1081,7 +1097,7 @@
     }
     if (!ETHS.closed) { pollEths(); setInterval(pollEths, 5000); }
     else { const el = document.getElementById("eths-pnl"); el.textContent = "+$" + ETHS.realized.toFixed(2); el.className = "pnl up"; document.getElementById("eths-mark").textContent = "$1,580.00 exit"; document.getElementById("eths-src").textContent = "Closed at target · net after fees"; document.getElementById("eths-to-target").textContent = "Take-profit $1,580 · hit"; }
-    const SOLS = { entry: 67.0, size: 0.5, stop: 68.0, target: 64.5, fee: 0.017, closed: false };
+    const SOLS = { entry: 67.0, size: 0.5, stop: 68.0, target: 64.5, fee: 0.017, closed: true, exit: 69.44, realized: -1.25 };
     let solsMark = null;
     function solsPnl() { if (SOLS.closed) return SOLS.realized; return solsMark == null ? -SOLS.fee : (SOLS.entry - solsMark) * SOLS.size - SOLS.fee; }
     async function pollSols() {
@@ -1109,7 +1125,7 @@
       }
     }
     if (!SOLS.closed) { pollSols(); setInterval(pollSols, 5000); }
-    const BTCS3 = { entry: 57600, size: 0.001, stop: 58300, target: 55500, fee: 0.0288, closed: false };
+    const BTCS3 = { entry: 57600, size: 0.001, stop: 58300, target: 55500, fee: 0.0288, closed: true, exit: 58855.65, realized: -1.31 };
     let btcs3Mark = null;
     function btcs3Pnl() { if (BTCS3.closed) return BTCS3.realized; return btcs3Mark == null ? -BTCS3.fee : (BTCS3.entry - btcs3Mark) * BTCS3.size - BTCS3.fee; }
     async function pollBtcs3() {
