@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x3) &amp; XRP · no open trades · resting: BTC short $57,600, SOL short $67.00</div>
+        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x3) &amp; XRP · open: SOL 3x short $67.00 · resting: BTC short $57,600</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,7 +459,7 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short · $56.41 collateral at 10:41 PM CT Nov 20 · resting: BTC short $57,600, SOL short $67.00</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short · $56.39 collateral at 12:45 AM CT Nov 21 · open: SOL short $67.00 · resting: BTC short $57,600</div>
       </div>
     </section>
 
@@ -470,10 +470,24 @@
       </div>
     </section>
 
-    <section class="card trade-card" id="card-sol-resting">
+    <section class="card trade-card" id="card-sols">
       <div class="trade-head">
-        <div class="label">Resting order · SOL 3x limit short · placed 10:41 PM CT Nov 20</div>
-        <div class="sub">Sell 0.5 SOL at $67.00 (FP-00067), waiting for a retest of broken support. Plan once filled: stop $68.00, target $64.50.</div>
+        <div class="label">Open trade · SOL 3x short · filled $67.00 at 12:45 AM CT Nov 21</div>
+        <div class="sub" id="sols-src">Waiting for SOL mark…</div>
+      </div>
+      <div id="sols-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$67.00</b></span>
+        <span>Size <b>0.5 SOL</b></span>
+        <span>Mark <b id="sols-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="sols-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="sols-to-target">Take-profit $64.50</span>
+        <span class="s" id="sols-to-stop">Stop $68.00</span>
       </div>
     </section>
 
@@ -1053,6 +1067,34 @@
     }
     if (!ETHS.closed) { pollEths(); setInterval(pollEths, 5000); }
     else { const el = document.getElementById("eths-pnl"); el.textContent = "+$" + ETHS.realized.toFixed(2); el.className = "pnl up"; document.getElementById("eths-mark").textContent = "$1,580.00 exit"; document.getElementById("eths-src").textContent = "Closed at target · net after fees"; document.getElementById("eths-to-target").textContent = "Take-profit $1,580 · hit"; }
+    const SOLS = { entry: 67.0, size: 0.5, stop: 68.0, target: 64.5, fee: 0.017, closed: false };
+    let solsMark = null;
+    function solsPnl() { if (SOLS.closed) return SOLS.realized; return solsMark == null ? -SOLS.fee : (SOLS.entry - solsMark) * SOLS.size - SOLS.fee; }
+    async function pollSols() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_SOLUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        solsMark = m;
+        const pnl = solsPnl();
+        const el = document.getElementById("sols-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("sols-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("sols-src").textContent = "Kraken SOL perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("sols-to-stop").textContent = "Stop $68.00  ·  " + (m >= SOLS.stop ? "at stop" : "$" + (SOLS.stop - m).toFixed(2) + " away");
+        document.getElementById("sols-to-target").textContent = "Take-profit $64.50  ·  " + (m <= SOLS.target ? "at target" : "$" + (m - SOLS.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - SOLS.target) / (SOLS.stop - SOLS.target) * 100));
+        document.getElementById("sols-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("sols-src").textContent = "SOL mark unavailable, retrying…";
+      }
+    }
+    if (!SOLS.closed) { pollSols(); setInterval(pollSols, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1337,7 +1379,7 @@
       cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl();
+      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - 250));
@@ -1359,9 +1401,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
@@ -1382,7 +1424,7 @@
       }
       pnlEl.dataset.val = String(pnl);
 
-      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl();
+      const lev = POSITIONS.leverageStart + pnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl();
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
