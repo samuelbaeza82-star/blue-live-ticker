@@ -449,7 +449,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Combined equity</div>
         <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x2) &amp; XRP · open: ETH 3x short · resting: BTC limit short $59,400</div>
+        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x3) &amp; XRP · no open trades · resting: BTC short $57,600, SOL short $67.00</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account</div>
@@ -459,20 +459,27 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR &amp; HOOD · $53.86 collateral at 4:44 PM CT Nov 20 · open: ETH 3x short · resting: BTC limit short $59,400</div>
+        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short · $56.41 collateral at 10:41 PM CT Nov 20 · resting: BTC short $57,600, SOL short $67.00</div>
       </div>
     </section>
 
     <section class="card trade-card" id="card-btc-resting">
       <div class="trade-head">
-        <div class="label">Resting order · BTC 3x limit short · placed 6:46 PM CT Nov 20</div>
-        <div class="sub">Sell 0.001 BTC at $59,400 (FP-00063), waiting for a bounce into resistance. Plan once filled: stop $60,000, target $58,100.</div>
+        <div class="label">Resting order · BTC 3x limit short · moved to $57,600 at 10:41 PM CT Nov 20</div>
+        <div class="sub">Sell 0.001 BTC at $57,600 (FP-00063), waiting for a bounce into broken support. Plan once filled: stop $58,300, target $55,500.</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-sol-resting">
+      <div class="trade-head">
+        <div class="label">Resting order · SOL 3x limit short · placed 10:41 PM CT Nov 20</div>
+        <div class="sub">Sell 0.5 SOL at $67.00 (FP-00067), waiting for a retest of broken support. Plan once filled: stop $68.00, target $64.50.</div>
       </div>
     </section>
 
     <section class="card trade-card" id="card-eths">
       <div class="trade-head">
-        <div class="label">Open trade · ETH 3x short · filled $1,623.20 at 4:44 PM CT Nov 20</div>
+        <div class="label">Closed trade · ETH 3x short · $1,623.20 → target $1,580 hit (10:40 PM CT Nov 20)</div>
         <div class="sub" id="eths-src">Waiting for ETH mark…</div>
       </div>
       <div id="eths-pnl" class="pnl flat">$0.00</div>
@@ -1017,7 +1024,7 @@
     if (!HOOD.closed) { pollHood(); setInterval(pollHood, 5000); }
 
     // ETH 3x futures short, filled $1,623.20 at 4:44 PM CT Nov 20, 2026 (practice). Stop FP-00061 1646 mark, TP FP-00062 1580.
-    const ETHS = { entry: 1623.2, size: 0.06, stop: 1646, target: 1580, fee: 0.049, closed: false, exit: null, realized: null };
+    const ETHS = { entry: 1623.2, size: 0.06, stop: 1646, target: 1580, fee: 0.049, closed: true, exit: 1580, realized: 2.50 };
     let ethsMark = null;
     function ethsPnl() { if (ETHS.closed) return ETHS.realized; return ethsMark == null ? -ETHS.fee : (ETHS.entry - ethsMark) * ETHS.size - ETHS.fee; }
     async function pollEths() {
@@ -1045,6 +1052,7 @@
       }
     }
     if (!ETHS.closed) { pollEths(); setInterval(pollEths, 5000); }
+    else { const el = document.getElementById("eths-pnl"); el.textContent = "+$" + ETHS.realized.toFixed(2); el.className = "pnl up"; document.getElementById("eths-mark").textContent = "$1,580.00 exit"; document.getElementById("eths-src").textContent = "Closed at target · net after fees"; document.getElementById("eths-to-target").textContent = "Take-profit $1,580 · hit"; }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
