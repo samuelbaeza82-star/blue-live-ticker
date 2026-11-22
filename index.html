@@ -182,10 +182,11 @@
 
     .accounts {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 14px;
       margin: 22px 0 16px;
     }
+    #card-cash, #card-lev { display: none; }
 
     .card {
       background: linear-gradient(180deg, var(--card-2), var(--card));
@@ -406,7 +407,8 @@
     }
 
     @media (max-width: 980px) {
-      .accounts, .waiting, .prices { grid-template-columns: 1fr 1fr; }
+      .accounts { grid-template-columns: 1fr; }
+      .waiting, .prices { grid-template-columns: 1fr 1fr; }
       .prices { grid-template-columns: 1fr 1fr; }
       .pnl { font-size: 52px; }
     }
@@ -425,8 +427,10 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>2:44 PM CT on Nov 20</strong>.
+          Positions are as of <strong>9:43 PM CT on Nov 21</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
+          One practice account: the leverage (futures) account.
+          At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
           The full dashboard updates every 2 hours, while this page ticks live.
         </p>
         <span class="badge">Practice (paper) account only</span>
@@ -447,19 +451,19 @@
 
     <section class="accounts">
       <div class="card combined" id="card-combined">
-        <div class="label">Combined equity</div>
-        <div id="combined" class="big flat">$250.00</div>
-        <div class="sub">$250 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD, ETH (x3) &amp; XRP · open: SOL 3x short $67.00 &amp; BTC 3x short $57,600</div>
+        <div class="label">Leverage account equity</div>
+        <div id="combined" class="big pos">$251.79</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · P&amp;L +$4.71 · open: BTC 3x short $60,000 · resting: ETH short $1,700</div>
       </div>
       <div class="card" id="card-cash">
-        <div class="label">Cash account</div>
-        <div id="cash" class="big flat">$200.00</div>
-        <div class="sub">$200 start + realized ETH (x2) &amp; XRP P&amp;L · $197.08 at 10:44 AM CT Nov 20</div>
+        <div class="label">Cash account (closed)</div>
+        <div id="cash" class="big flat">$0.00</div>
+        <div class="sub">Moved to the leverage account at 9:43 PM CT Nov 21, at Blue's request</div>
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big flat">$50.00</div>
-        <div class="sub">$50 start + realized BTC (x2), NVDA (x2), QQQ, GOOGL, MSTR, HOOD &amp; ETH short, SOL &amp; BTC short stops · $53.81 collateral at 8:44 AM CT Nov 21 · open: BTC short $60,000 · resting: ETH short $1,700</div>
+        <div id="leverage" class="big pos">$251.79</div>
+        <div class="sub">Same account as above · $250.89 collateral · about $203.46 margin free</div>
       </div>
     </section>
 
@@ -729,7 +733,7 @@
 
     <section class="card trade-card" id="card-eth">
       <div class="trade-head">
-        <div class="label">Closed trade · ETH long · sold at $1,788.30 (9:29 AM CT Nov 19)</div>
+        <div class="label">Closed trade · history (cash) · ETH long · sold at $1,788.30 (9:29 AM CT Nov 19)</div>
         <div class="sub" id="eth-live-source">Closed · take profits on Blue's request</div>
       </div>
       <div id="eth-pnl" class="pnl pos">+$1.23</div>
@@ -751,7 +755,7 @@
 
     <section class="card trade-card" id="card-xrp">
       <div class="trade-head">
-        <div class="label">Closed trade · XRP long · sold at $0.9827 (9:29 AM CT Nov 19)</div>
+        <div class="label">Closed trade · history (cash) · XRP long · sold at $0.9827 (9:29 AM CT Nov 19)</div>
         <div class="sub" id="xrp-live-source">Closed · take profits on Blue's request</div>
       </div>
       <div id="xrp-pnl" class="pnl pos">+$1.56</div>
@@ -773,7 +777,7 @@
 
     <section class="card trade-card" id="card-eth2">
       <div class="trade-head">
-        <div class="label">Closed trade · ETH long · limit filled $1,712, stop-sold at $1,639.15 (10:42 AM CT Nov 20)</div>
+        <div class="label">Closed trade · history (cash) · ETH long · limit filled $1,712, stop-sold at $1,639.15 (10:42 AM CT Nov 20)</div>
         <div class="sub">Closed · fill reconciled late during crypto flush; ETH already below the $1,680 stop</div>
       </div>
       <div id="eth2-pnl" class="pnl neg">-$5.71</div>
@@ -832,9 +836,9 @@
   <script>
     // Practice positions as confirmed 4:44 PM CT, Nov 20, 2026.
     const POSITIONS = {
-      asOf: "4:44 PM CT on Nov 20",
-      cashStart: 200,
-      leverageStart: 50,
+      asOf: "9:43 PM CT on Nov 21",
+      cashStart: 0,
+      leverageStart: 247.08,
       short: {
         symbol: "PF_XBTUSD",
         side: "short",
@@ -1473,18 +1477,18 @@
     }
 
     function renderCashAndCombined(sPnl) {
-      const cPnl = cashLivePnl();
       const cashEl = document.getElementById("cash");
-      const cash = POSITIONS.cashStart + cPnl;
-      cashEl.textContent = money(cash);
-      cashEl.classList.remove("pos", "neg", "flat");
-      cashEl.classList.add(signClass(cash - POSITIONS.cashStart));
+      if (cashEl) {
+        cashEl.textContent = money(0);
+        cashEl.classList.remove("pos", "neg", "flat");
+        cashEl.classList.add("flat");
+      }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.cashStart + POSITIONS.leverageStart + sPnl + cPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
-      combinedEl.classList.add(signClass(combined - 250));
+      combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
     }
 
     function updatePnL() {
@@ -1530,7 +1534,7 @@
       renderCashAndCombined(pnl);
       levEl.textContent = money(lev);
       levEl.classList.remove("pos", "neg", "flat");
-      levEl.classList.add(signClass(lev - 50));
+      levEl.classList.add(signClass(lev - POSITIONS.leverageStart));
 
       markEl.textContent = formatPrice(mark);
       src.textContent = state.markApprox
