@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>4:38 AM CT on Nov 22</strong>.
+          Positions are as of <strong>10:41 AM CT on Nov 22</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -453,7 +453,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
         <div id="combined" class="big pos">$249.84</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: BTC 3x short $60,000 · ETH 3x short $1,700 (filled 4:38 AM CT Nov 22)</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,700 · resting: SOL 3x short $71.00 · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -463,7 +463,18 @@
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
         <div id="leverage" class="big pos">$249.84</div>
-        <div class="sub">Same account as above · $250.84 collateral · about $201.51 margin free at 4:38 AM CT Nov 22</div>
+        <div class="sub">Same account as above · $249.55 collateral · about $208.31 margin free at 10:41 AM CT Nov 22</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-resting-1122">
+      <div class="trade-head">
+        <div class="label">Resting order · placed 10:41 AM CT Nov 22 (3x short, not filled yet)</div>
+      </div>
+      <div class="meta">
+        <span>SOL short <b>0.5 @ $71.00</b></span>
+        <span>Stop <b>$72.00</b></span>
+        <span>Target <b>$68.50</b></span>
       </div>
     </section>
 
@@ -490,10 +501,10 @@
 
     <section class="card trade-card" id="card-btcs4">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 3x short · filled $60,000 at 8:42 AM CT Nov 21</div>
-        <div class="sub" id="btcs4-src">Waiting for BTC mark…</div>
+        <div class="label">Closed trade · BTC 3x short · $60,000 → stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div class="sub" id="btcs4-src">Closed · stop hit on BTC bounce</div>
       </div>
-      <div id="btcs4-pnl" class="pnl flat">$0.00</div>
+      <div id="btcs4-pnl" class="pnl neg">-$1.29</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$60,000</b></span>
@@ -1183,7 +1194,7 @@
       }
     }
     if (!BTCS3.closed) { pollBtcs3(); setInterval(pollBtcs3, 5000); }
-    const BTCS4 = { entry: 60000, size: 0.001, stop: 60800, target: 58300, fee: 0.03, closed: false };
+    const BTCS4 = { entry: 60000, size: 0.001, stop: 60800, target: 58300, fee: 0.03, closed: true, exit: 61263.4, realized: -1.29 };
     let btcs4Mark = null;
     function btcs4Pnl() { if (BTCS4.closed) return BTCS4.realized; return btcs4Mark == null ? -BTCS4.fee : (BTCS4.entry - btcs4Mark) * BTCS4.size - BTCS4.fee; }
     async function pollBtcs4() {
