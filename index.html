@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big pos">$248.02</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,700 · resting XRP 3x limit short 230 @ $0.945 (stop $0.955, target $0.915, placed 6:44 AM CT Nov 23) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$230.92</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · no open positions or orders · paused for the day after 8:40 AM CT Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,11 +462,31 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big pos">$248.02</div>
-        <div class="sub">Same account as above · $248.93 collateral · about $219.73 margin free at 6:44 AM CT Nov 23</div>
+        <div id="leverage" class="big neg">$230.92</div>
+        <div class="sub">Same account as above · $230.92 collateral · all margin free at 8:40 AM CT Nov 23</div>
       </div>
     </section>
 
+    <section class="card trade-card" id="card-xrps">
+      <div class="trade-head">
+        <div class="label">Closed trade · XRP 3x short · $0.945 → closed $0.9993 (8:40 AM CT Nov 23)</div>
+        <div class="sub" id="xrps-src">Closed · filled and blew past stop on XRP rally</div>
+      </div>
+      <div id="xrps-pnl" class="pnl neg">-$12.71</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$0.945</b></span>
+        <span>Size <b>230 XRP</b></span>
+        <span>Mark <b id="xrps-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="xrps-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="xrps-to-target">Take-profit $0.915</span>
+        <span class="s" id="xrps-to-stop">Stop $0.955</span>
+      </div>
+    </section>
     <section class="card trade-card" id="card-sols2">
       <div class="trade-head">
         <div class="label">Closed trade · SOL 3x short · $71.00 → stopped $72.18 (2:36 AM CT Nov 23)</div>
@@ -490,10 +510,10 @@
 
     <section class="card trade-card" id="card-eths2">
       <div class="trade-head">
-        <div class="label">Open trade · ETH 3x short · filled $1,700 at 4:38 AM CT Nov 22</div>
-        <div class="sub" id="eths2-src">Waiting for ETH mark…</div>
+        <div class="label">Closed trade · ETH 3x short · $1,700 → stopped $1,805 (8:40 AM CT Nov 23)</div>
+        <div class="sub" id="eths2-src">Closed · stop gapped on ETH rally</div>
       </div>
-      <div id="eths2-pnl" class="pnl flat">$0.00</div>
+      <div id="eths2-pnl" class="pnl neg">-$5.34</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$1,700</b></span>
@@ -1232,7 +1252,7 @@
       }
     }
     if (!BTCS4.closed) { pollBtcs4(); setInterval(pollBtcs4, 5000); }
-    const ETHS2 = { entry: 1700, size: 0.05, stop: 1725, target: 1640, fee: 0.0425, closed: false };
+    const ETHS2 = { entry: 1700, size: 0.05, stop: 1725, target: 1640, fee: 0.0425, closed: true, exit: 1805.0, realized: -5.34 };
     let eths2Mark = null;
     function eths2Pnl() { if (ETHS2.closed) return ETHS2.realized; return eths2Mark == null ? -ETHS2.fee : (ETHS2.entry - eths2Mark) * ETHS2.size - ETHS2.fee; }
     async function pollEths2() {
@@ -1289,6 +1309,35 @@
       }
     }
     if (!SOLS2.closed) { pollSols2(); setInterval(pollSols2, 5000); }
+
+    const XRPS = { entry: 0.945, size: 230, stop: 0.955, target: 0.915, fee: 0.1087, closed: true, exit: 0.9993, realized: -12.71 };
+    let xrpsMark = null;
+    function xrpsPnl() { if (XRPS.closed) return XRPS.realized; return xrpsMark == null ? -XRPS.fee : (XRPS.entry - xrpsMark) * XRPS.size - XRPS.fee; }
+    async function pollXrps() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_XRPUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        xrpsMark = m;
+        const pnl = xrpsPnl();
+        const el = document.getElementById("xrps-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("xrps-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("xrps-src").textContent = "Kraken XRP perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("xrps-to-stop").textContent = "Stop $0.955  ·  " + (m >= XRPS.stop ? "at stop" : "$" + (XRPS.stop - m).toFixed(2) + " away");
+        document.getElementById("xrps-to-target").textContent = "Take-profit $0.915  ·  " + (m <= XRPS.target ? "at target" : "$" + (m - XRPS.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - XRPS.target) / (XRPS.stop - XRPS.target) * 100));
+        document.getElementById("xrps-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("xrps-src").textContent = "XRP mark unavailable, retrying…";
+      }
+    }
+    if (!XRPS.closed) { pollXrps(); setInterval(pollXrps, 5000); }
 
     const SPOT_URL = "wss://ws.kraken.com/v2";
     const FUT_URL = "wss://futures.kraken.com/ws/v1";
@@ -1573,7 +1622,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -1595,9 +1644,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
