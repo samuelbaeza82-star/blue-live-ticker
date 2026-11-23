@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big pos">$249.84</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,700, SOL 3x short $71.00 · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big pos">$248.02</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,700 · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,17 +462,17 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big pos">$249.84</div>
-        <div class="sub">Same account as above · $249.53 collateral · about $208.08 margin free at 10:37 PM CT Nov 22</div>
+        <div id="leverage" class="big pos">$248.02</div>
+        <div class="sub">Same account as above · $248.93 collateral · about $219.68 margin free at 2:37 AM CT Nov 23</div>
       </div>
     </section>
 
     <section class="card trade-card" id="card-sols2">
       <div class="trade-head">
-        <div class="label">Open trade · SOL 3x short · filled $71.00 at 10:36 PM CT Nov 22</div>
-        <div class="sub" id="sols2-src">Waiting for SOL mark…</div>
+        <div class="label">Closed trade · SOL 3x short · $71.00 → stopped $72.18 (2:36 AM CT Nov 23)</div>
+        <div class="sub" id="sols2-src">Closed · stop hit on SOL bounce</div>
       </div>
-      <div id="sols2-pnl" class="pnl flat">$0.00</div>
+      <div id="sols2-pnl" class="pnl neg">-$0.62</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$71.00</b></span>
@@ -1261,7 +1261,7 @@
     }
     if (!ETHS2.closed) { pollEths2(); setInterval(pollEths2, 5000); }
 
-    const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: false };
+    const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
     function sols2Pnl() { if (SOLS2.closed) return SOLS2.realized; return sols2Mark == null ? -SOLS2.fee : (SOLS2.entry - sols2Mark) * SOLS2.size - SOLS2.fee; }
     async function pollSols2() {
