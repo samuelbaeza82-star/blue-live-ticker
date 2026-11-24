@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>10:41 AM CT on Nov 22</strong>.
+          Positions are as of <strong>12:42 AM CT on Nov 24</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$230.92</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · no open positions or orders · paused for the day after 8:40 AM CT Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$230.83</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop $1,722, target $1,655, 12:42 AM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,29 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$230.92</div>
-        <div class="sub">Same account as above · $230.92 collateral · all margin free at 8:40 AM CT Nov 23</div>
+        <div id="leverage" class="big neg">$230.83</div>
+        <div class="sub">Same account as above · $230.83 collateral · about $174.19 margin free at 12:42 AM CT Nov 24</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-eths3">
+      <div class="trade-head">
+        <div class="label">Open trade · ETH 3x short · filled $1,699.30 at 12:42 AM CT Nov 24</div>
+        <div class="sub" id="eths3-src">Waiting for ETH mark…</div>
+      </div>
+      <div id="eths3-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$1,699.30</b></span>
+        <span>Size <b>0.1 ETH</b></span>
+        <span>Mark <b id="eths3-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="eths3-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="eths3-to-target">Take-profit $1,655</span>
+        <span class="s" id="eths3-to-stop">Stop $1,722</span>
       </div>
     </section>
 
@@ -1280,6 +1301,34 @@
       }
     }
     if (!ETHS2.closed) { pollEths2(); setInterval(pollEths2, 5000); }
+    const ETHS3 = { entry: 1699.30, size: 0.1, stop: 1722, target: 1655, fee: 0.085, closed: false };
+    let eths3Mark = null;
+    function eths3Pnl() { if (ETHS3.closed) return ETHS3.realized; return eths3Mark == null ? -ETHS3.fee : (ETHS3.entry - eths3Mark) * ETHS3.size - ETHS3.fee; }
+    async function pollEths3() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_ETHUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        eths3Mark = m;
+        const pnl = eths3Pnl();
+        const el = document.getElementById("eths3-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("eths3-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("eths3-src").textContent = "Kraken ETH perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("eths3-to-stop").textContent = "Stop $1,722  ·  " + (m >= ETHS3.stop ? "at stop" : "$" + (ETHS3.stop - m).toFixed(2) + " away");
+        document.getElementById("eths3-to-target").textContent = "Take-profit $1,655  ·  " + (m <= ETHS3.target ? "at target" : "$" + (m - ETHS3.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - ETHS3.target) / (ETHS3.stop - ETHS3.target) * 100));
+        document.getElementById("eths3-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("eths3-src").textContent = "ETH mark unavailable, retrying…";
+      }
+    }
+    if (!ETHS3.closed) { pollEths3(); setInterval(pollEths3, 5000); }
 
     const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
@@ -1644,9 +1693,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
