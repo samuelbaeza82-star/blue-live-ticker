@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>2:45 AM CT on Nov 24</strong>.
+          Positions are as of <strong>8:39 AM CT on Nov 24</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$230.51</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop $1,722, target $1,655, 12:42 AM CT Nov 24) + BTC 3x short $60,349 (stop $60,800, target $59,000, 2:45 AM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$232.37</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop $1,722, target $1,655, 12:42 AM CT Nov 24) + BTC 3x short $60,349 (stop $60,800, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop $158, target $147, 8:39 AM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,29 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$230.51</div>
-        <div class="sub">Same account as above · $230.70 collateral · about $83.34 margin free at 2:45 AM CT Nov 24</div>
+        <div id="leverage" class="big neg">$232.37</div>
+        <div class="sub">Same account as above · $230.65 collateral · about $50.26 margin free at 8:39 AM CT Nov 24</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-nvdas6">
+      <div class="trade-head">
+        <div class="label">Open trade · NVDA 3x short · filled $154.13 at 8:39 AM CT Nov 24</div>
+        <div class="sub" id="nvdas6-src">Waiting for NVDA mark…</div>
+      </div>
+      <div id="nvdas6-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$154.13</b></span>
+        <span>Size <b>0.68 NVDAx</b></span>
+        <span>Mark <b id="nvdas6-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="nvdas6-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="nvdas6-to-target">Take-profit $147.00</span>
+        <span class="s" id="nvdas6-to-stop">Stop $158.00</span>
       </div>
     </section>
 
@@ -1378,6 +1399,34 @@
       }
     }
     if (!BTCS5.closed) { pollBtcs5(); setInterval(pollBtcs5, 5000); }
+    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 158, target: 147, fee: 0.0524, closed: false };
+    let nvdas6Mark = null;
+    function nvdas6Pnl() { if (NVDAS6.closed) return NVDAS6.realized; return nvdas6Mark == null ? -NVDAS6.fee : (NVDAS6.entry - nvdas6Mark) * NVDAS6.size - NVDAS6.fee; }
+    async function pollNvdas6() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_NVDAXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        nvdas6Mark = m;
+        const pnl = nvdas6Pnl();
+        const el = document.getElementById("nvdas6-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("nvdas6-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("nvdas6-src").textContent = "Kraken NVDA perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("nvdas6-to-stop").textContent = "Stop $158.00  ·  " + (m >= NVDAS6.stop ? "at stop" : "$" + (NVDAS6.stop - m).toFixed(2) + " away");
+        document.getElementById("nvdas6-to-target").textContent = "Take-profit $147.00  ·  " + (m <= NVDAS6.target ? "at target" : "$" + (m - NVDAS6.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - NVDAS6.target) / (NVDAS6.stop - NVDAS6.target) * 100));
+        document.getElementById("nvdas6-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("nvdas6-src").textContent = "NVDA mark unavailable, retrying…";
+      }
+    }
+    if (!NVDAS6.closed) { pollNvdas6(); setInterval(pollNvdas6, 5000); }
 
     const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
@@ -1720,7 +1769,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -1742,9 +1791,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
