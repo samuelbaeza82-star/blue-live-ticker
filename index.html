@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>8:39 AM CT on Nov 24</strong>.
+          Positions are as of <strong>12:39 PM CT on Nov 24</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$232.37</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop trailed $1,705, target $1,655, 12:42 AM CT Nov 24) + BTC 3x short $60,349 (stop trailed $60,400, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop trailed $155, target $147, 8:39 AM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$233.06</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop trailed $1,705, target $1,655, 12:42 AM CT Nov 24) + BTC 3x short $60,349 (stop trailed $60,400, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop trailed $155, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop $131, target $121.50, 12:39 PM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,29 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$232.37</div>
-        <div class="sub">Same account as above · $230.65 collateral · about $50.26 margin free at 8:39 AM CT Nov 24</div>
+        <div id="leverage" class="big neg">$233.06</div>
+        <div class="sub">Same account as above · $230.60 collateral · about $22.16 margin free at 12:39 PM CT Nov 24</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-spcxs7">
+      <div class="trade-head">
+        <div class="label">Open trade · SPCX 3x short · filled $127.52 at 12:39 PM CT Nov 24</div>
+        <div class="sub" id="spcxs7-src">Waiting for SPCX mark…</div>
+      </div>
+      <div id="spcxs7-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$127.52</b></span>
+        <span>Size <b>0.68 SPCXx</b></span>
+        <span>Mark <b id="spcxs7-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="spcxs7-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="spcxs7-to-target">Take-profit $121.50</span>
+        <span class="s" id="spcxs7-to-stop">Stop $131.00</span>
       </div>
     </section>
 
@@ -1427,6 +1448,34 @@
       }
     }
     if (!NVDAS6.closed) { pollNvdas6(); setInterval(pollNvdas6, 5000); }
+    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 131, target: 121.5, fee: 0.0434, closed: false };
+    let spcxs7Mark = null;
+    function spcxs7Pnl() { if (SPCXS7.closed) return SPCXS7.realized; return spcxs7Mark == null ? -SPCXS7.fee : (SPCXS7.entry - spcxs7Mark) * SPCXS7.size - SPCXS7.fee; }
+    async function pollSpcxs7() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_SPCXXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        spcxs7Mark = m;
+        const pnl = spcxs7Pnl();
+        const el = document.getElementById("spcxs7-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("spcxs7-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("spcxs7-src").textContent = "Kraken SPCX perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("spcxs7-to-stop").textContent = "Stop $131.00  ·  " + (m >= SPCXS7.stop ? "at stop" : "$" + (SPCXS7.stop - m).toFixed(2) + " away");
+        document.getElementById("spcxs7-to-target").textContent = "Take-profit $121.50  ·  " + (m <= SPCXS7.target ? "at target" : "$" + (m - SPCXS7.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - SPCXS7.target) / (SPCXS7.stop - SPCXS7.target) * 100));
+        document.getElementById("spcxs7-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("spcxs7-src").textContent = "SPCX mark unavailable, retrying…";
+      }
+    }
+    if (!SPCXS7.closed) { pollSpcxs7(); setInterval(pollSpcxs7, 5000); }
 
     const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
@@ -1769,7 +1818,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -1791,9 +1840,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
