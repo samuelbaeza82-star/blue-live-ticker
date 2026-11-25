@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>6:42 AM CT on Nov 25</strong>.
+          Positions are as of <strong>8:42 AM CT on Nov 25</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big pos">$247.69</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: NVDA 3x short $154.13 (stop trailed $150.10, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $124.30, target $121.50, 12:39 PM CT Nov 24) + SOL 3x short $68.81 (stop trailed $68.10, target $67.30, 10:40 PM CT Nov 24) + ETH 3x short $1,645.90 (stop trailed $1,660, target $1,600, 2:46 AM CT Nov 25) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big pos">$259.25</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: TSLA 3x short $361.66 (stop $371, target $347.45) + AMZN 3x short $238.58 (stop $243.50, target $230.42) + COIN 3x short $95.85 (stop $99, target $91), all 8:41 AM CT Nov 25 + ETH 3x short $1,645.90 (stop trailed $1,645, target $1,600, 2:46 AM CT Nov 25) · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,71 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big pos">$247.69</div>
-        <div class="sub">Same account as above · $240.99 collateral · about $78 margin free at 6:42 AM CT Nov 25</div>
+        <div id="leverage" class="big pos">$259.25</div>
+        <div class="sub">Same account as above · $256.24 collateral · about $114 margin free at 8:42 AM CT Nov 25</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-tslas10">
+      <div class="trade-head">
+        <div class="label">Open trade · TSLA 3x short · filled $361.66 at 8:41 AM CT Nov 25</div>
+        <div class="sub" id="tslas10-src">Waiting for TSLA mark…</div>
+      </div>
+      <div id="tslas10-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$361.66</b></span>
+        <span>Size <b>0.27 TSLAx</b></span>
+        <span>Mark <b id="tslas10-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="tslas10-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="tslas10-to-target">Take-profit $347.45</span>
+        <span class="s" id="tslas10-to-stop">Stop $371.00</span>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-amzns11">
+      <div class="trade-head">
+        <div class="label">Open trade · AMZN 3x short · filled $238.58 at 8:41 AM CT Nov 25</div>
+        <div class="sub" id="amzns11-src">Waiting for AMZN mark…</div>
+      </div>
+      <div id="amzns11-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$238.58</b></span>
+        <span>Size <b>0.47 AMZNx</b></span>
+        <span>Mark <b id="amzns11-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="amzns11-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="amzns11-to-target">Take-profit $230.42</span>
+        <span class="s" id="amzns11-to-stop">Stop $243.50</span>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-coins12">
+      <div class="trade-head">
+        <div class="label">Open trade · COIN 3x short · filled $95.85 at 8:41 AM CT Nov 25</div>
+        <div class="sub" id="coins12-src">Waiting for COIN mark…</div>
+      </div>
+      <div id="coins12-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$95.85</b></span>
+        <span>Size <b>0.8 COINx</b></span>
+        <span>Mark <b id="coins12-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="coins12-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="coins12-to-target">Take-profit $91.00</span>
+        <span class="s" id="coins12-to-stop">Stop $99.00</span>
       </div>
     </section>
 
@@ -484,16 +547,16 @@
       </div>
       <div class="range-labels">
         <span class="t" id="eths9-to-target">Take-profit $1,600</span>
-        <span class="s" id="eths9-to-stop">Stop $1,660</span>
+        <span class="s" id="eths9-to-stop">Stop $1,645</span>
       </div>
     </section>
 
     <section class="card trade-card" id="card-sols8">
       <div class="trade-head">
-        <div class="label">Open trade · SOL 3x short · filled $68.81 at 10:40 PM CT Nov 24</div>
+        <div class="label">Closed trade · SOL 3x short · $68.81 → target $66.52 hit (8:40 AM CT Nov 25)</div>
         <div class="sub" id="sols8-src">Waiting for SOL mark…</div>
       </div>
-      <div id="sols8-pnl" class="pnl flat">$0.00</div>
+      <div id="sols8-pnl" class="pnl pos">+$5.99</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$68.81</b></span>
@@ -511,10 +574,10 @@
 
     <section class="card trade-card" id="card-spcxs7">
       <div class="trade-head">
-        <div class="label">Open trade · SPCX 3x short · filled $127.52 at 12:39 PM CT Nov 24</div>
+        <div class="label">Closed trade · SPCX 3x short · $127.52 → target $121.43 hit (6:55 AM CT Nov 25)</div>
         <div class="sub" id="spcxs7-src">Waiting for SPCX mark…</div>
       </div>
-      <div id="spcxs7-pnl" class="pnl flat">$0.00</div>
+      <div id="spcxs7-pnl" class="pnl pos">+$4.05</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$127.52</b></span>
@@ -532,10 +595,10 @@
 
     <section class="card trade-card" id="card-nvdas6">
       <div class="trade-head">
-        <div class="label">Open trade · NVDA 3x short · filled $154.13 at 8:39 AM CT Nov 24</div>
+        <div class="label">Closed trade · NVDA 3x short · $154.13 → target $146.40 hit (6:55 AM CT Nov 25)</div>
         <div class="sub" id="nvdas6-src">Waiting for NVDA mark…</div>
       </div>
-      <div id="nvdas6-pnl" class="pnl flat">$0.00</div>
+      <div id="nvdas6-pnl" class="pnl pos">+$5.16</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$154.13</b></span>
@@ -1463,7 +1526,7 @@
       }
     }
     if (!BTCS5.closed) { pollBtcs5(); setInterval(pollBtcs5, 5000); }
-    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 150.1, target: 147, fee: 0.0524, closed: false };
+    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 150.1, target: 147, fee: 0.0524, closed: true, exit: 146.40, realized: 5.16 };
     let nvdas6Mark = null;
     function nvdas6Pnl() { if (NVDAS6.closed) return NVDAS6.realized; return nvdas6Mark == null ? -NVDAS6.fee : (NVDAS6.entry - nvdas6Mark) * NVDAS6.size - NVDAS6.fee; }
     async function pollNvdas6() {
@@ -1491,7 +1554,7 @@
       }
     }
     if (!NVDAS6.closed) { pollNvdas6(); setInterval(pollNvdas6, 5000); }
-    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 124.3, target: 121.5, fee: 0.0434, closed: false };
+    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 124.3, target: 121.5, fee: 0.0434, closed: true, exit: 121.43, realized: 4.05 };
     let spcxs7Mark = null;
     function spcxs7Pnl() { if (SPCXS7.closed) return SPCXS7.realized; return spcxs7Mark == null ? -SPCXS7.fee : (SPCXS7.entry - spcxs7Mark) * SPCXS7.size - SPCXS7.fee; }
     async function pollSpcxs7() {
@@ -1519,7 +1582,7 @@
       }
     }
     if (!SPCXS7.closed) { pollSpcxs7(); setInterval(pollSpcxs7, 5000); }
-    const SOLS8 = { entry: 68.81, size: 2.7, stop: 68.1, target: 67.3, fee: 0.0929, closed: false };
+    const SOLS8 = { entry: 68.81, size: 2.7, stop: 68.1, target: 67.3, fee: 0.0929, closed: true, exit: 66.52, realized: 5.99 };
     let sols8Mark = null;
     function sols8Pnl() { if (SOLS8.closed) return SOLS8.realized; return sols8Mark == null ? -SOLS8.fee : (SOLS8.entry - sols8Mark) * SOLS8.size - SOLS8.fee; }
     async function pollSols8() {
@@ -1547,7 +1610,7 @@
       }
     }
     if (!SOLS8.closed) { pollSols8(); setInterval(pollSols8, 5000); }
-    const ETHS9 = { entry: 1645.9, size: 0.09, stop: 1660, target: 1600, fee: 0.0741, closed: false };
+    const ETHS9 = { entry: 1645.9, size: 0.09, stop: 1645, target: 1600, fee: 0.0741, closed: false };
     let eths9Mark = null;
     function eths9Pnl() { if (ETHS9.closed) return ETHS9.realized; return eths9Mark == null ? -ETHS9.fee : (ETHS9.entry - eths9Mark) * ETHS9.size - ETHS9.fee; }
     async function pollEths9() {
@@ -1565,7 +1628,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("eths9-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("eths9-src").textContent = "Kraken ETH perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("eths9-to-stop").textContent = "Stop $1,660  ·  " + (m >= ETHS9.stop ? "at stop" : "$" + (ETHS9.stop - m).toFixed(2) + " away");
+        document.getElementById("eths9-to-stop").textContent = "Stop $1,645  ·  " + (m >= ETHS9.stop ? "at stop" : "$" + (ETHS9.stop - m).toFixed(2) + " away");
         document.getElementById("eths9-to-target").textContent = "Take-profit $1,600  ·  " + (m <= ETHS9.target ? "at target" : "$" + (m - ETHS9.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - ETHS9.target) / (ETHS9.stop - ETHS9.target) * 100));
         document.getElementById("eths9-range-mark").style.left = pct + "%";
@@ -1576,6 +1639,90 @@
     }
     if (!ETHS9.closed) { pollEths9(); setInterval(pollEths9, 5000); }
 
+    const TSLAS10 = { entry: 361.66, size: 0.27, stop: 371.0, target: 347.45, fee: 0.0488, closed: false };
+    let tslas10Mark = null;
+    function tslas10Pnl() { if (TSLAS10.closed) return TSLAS10.realized; return tslas10Mark == null ? -TSLAS10.fee : (TSLAS10.entry - tslas10Mark) * TSLAS10.size - TSLAS10.fee; }
+    async function pollTslas10() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_TSLAXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        tslas10Mark = m;
+        const pnl = tslas10Pnl();
+        const el = document.getElementById("tslas10-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("tslas10-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("tslas10-src").textContent = "Kraken TSLA perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("tslas10-to-stop").textContent = "Stop $371.00  ·  " + (m >= TSLAS10.stop ? "at stop" : "$" + (TSLAS10.stop - m).toFixed(2) + " away");
+        document.getElementById("tslas10-to-target").textContent = "Take-profit $347.45  ·  " + (m <= TSLAS10.target ? "at target" : "$" + (m - TSLAS10.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - TSLAS10.target) / (TSLAS10.stop - TSLAS10.target) * 100));
+        document.getElementById("tslas10-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("tslas10-src").textContent = "TSLA mark unavailable, retrying…";
+      }
+    }
+    if (!TSLAS10.closed) { pollTslas10(); setInterval(pollTslas10, 5000); }
+    const AMZNS11 = { entry: 238.58, size: 0.47, stop: 243.5, target: 230.42, fee: 0.0561, closed: false };
+    let amzns11Mark = null;
+    function amzns11Pnl() { if (AMZNS11.closed) return AMZNS11.realized; return amzns11Mark == null ? -AMZNS11.fee : (AMZNS11.entry - amzns11Mark) * AMZNS11.size - AMZNS11.fee; }
+    async function pollAmzns11() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_AMZNXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        amzns11Mark = m;
+        const pnl = amzns11Pnl();
+        const el = document.getElementById("amzns11-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("amzns11-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("amzns11-src").textContent = "Kraken AMZN perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("amzns11-to-stop").textContent = "Stop $243.50  ·  " + (m >= AMZNS11.stop ? "at stop" : "$" + (AMZNS11.stop - m).toFixed(2) + " away");
+        document.getElementById("amzns11-to-target").textContent = "Take-profit $230.42  ·  " + (m <= AMZNS11.target ? "at target" : "$" + (m - AMZNS11.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - AMZNS11.target) / (AMZNS11.stop - AMZNS11.target) * 100));
+        document.getElementById("amzns11-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("amzns11-src").textContent = "AMZN mark unavailable, retrying…";
+      }
+    }
+    if (!AMZNS11.closed) { pollAmzns11(); setInterval(pollAmzns11, 5000); }
+    const COINS12 = { entry: 95.85, size: 0.8, stop: 99.0, target: 91.0, fee: 0.0383, closed: false };
+    let coins12Mark = null;
+    function coins12Pnl() { if (COINS12.closed) return COINS12.realized; return coins12Mark == null ? -COINS12.fee : (COINS12.entry - coins12Mark) * COINS12.size - COINS12.fee; }
+    async function pollCoins12() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_COINXUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        coins12Mark = m;
+        const pnl = coins12Pnl();
+        const el = document.getElementById("coins12-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("coins12-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("coins12-src").textContent = "Kraken COIN perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("coins12-to-stop").textContent = "Stop $99.00  ·  " + (m >= COINS12.stop ? "at stop" : "$" + (COINS12.stop - m).toFixed(2) + " away");
+        document.getElementById("coins12-to-target").textContent = "Take-profit $91.00  ·  " + (m <= COINS12.target ? "at target" : "$" + (m - COINS12.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - COINS12.target) / (COINS12.stop - COINS12.target) * 100));
+        document.getElementById("coins12-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("coins12-src").textContent = "COIN mark unavailable, retrying…";
+      }
+    }
+    if (!COINS12.closed) { pollCoins12(); setInterval(pollCoins12, 5000); }
     const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
     function sols2Pnl() { if (SOLS2.closed) return SOLS2.realized; return sols2Mark == null ? -SOLS2.fee : (SOLS2.entry - sols2Mark) * SOLS2.size - SOLS2.fee; }
@@ -1917,7 +2064,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -1939,9 +2086,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
