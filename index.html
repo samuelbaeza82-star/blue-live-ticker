@@ -453,7 +453,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
         <div id="combined" class="big pos">$247.69</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: NVDA 3x short $154.13 (stop trailed $154.10, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $128, target $121.50, 12:39 PM CT Nov 24) + SOL 3x short $68.81 (stop trailed $69.10, target $67.30, 10:40 PM CT Nov 24) + ETH 3x short $1,645.90 (stop $1,672, target $1,600, 2:46 AM CT Nov 25) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: NVDA 3x short $154.13 (stop trailed $151.60, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $124.30, target $121.50, 12:39 PM CT Nov 24) + SOL 3x short $68.81 (stop trailed $68.80, target $67.30, 10:40 PM CT Nov 24) + ETH 3x short $1,645.90 (stop $1,672, target $1,600, 2:46 AM CT Nov 25) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -505,7 +505,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="sols8-to-target">Take-profit $67.30</span>
-        <span class="s" id="sols8-to-stop">Stop $69.10</span>
+        <span class="s" id="sols8-to-stop">Stop $68.80</span>
       </div>
     </section>
 
@@ -526,7 +526,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="spcxs7-to-target">Take-profit $121.50</span>
-        <span class="s" id="spcxs7-to-stop">Stop $128.00</span>
+        <span class="s" id="spcxs7-to-stop">Stop $124.30</span>
       </div>
     </section>
 
@@ -547,7 +547,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="nvdas6-to-target">Take-profit $147.00</span>
-        <span class="s" id="nvdas6-to-stop">Stop $154.10</span>
+        <span class="s" id="nvdas6-to-stop">Stop $151.60</span>
       </div>
     </section>
 
@@ -1463,7 +1463,7 @@
       }
     }
     if (!BTCS5.closed) { pollBtcs5(); setInterval(pollBtcs5, 5000); }
-    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 154.1, target: 147, fee: 0.0524, closed: false };
+    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 151.6, target: 147, fee: 0.0524, closed: false };
     let nvdas6Mark = null;
     function nvdas6Pnl() { if (NVDAS6.closed) return NVDAS6.realized; return nvdas6Mark == null ? -NVDAS6.fee : (NVDAS6.entry - nvdas6Mark) * NVDAS6.size - NVDAS6.fee; }
     async function pollNvdas6() {
@@ -1481,7 +1481,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("nvdas6-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("nvdas6-src").textContent = "Kraken NVDA perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("nvdas6-to-stop").textContent = "Stop $154.10  ·  " + (m >= NVDAS6.stop ? "at stop" : "$" + (NVDAS6.stop - m).toFixed(2) + " away");
+        document.getElementById("nvdas6-to-stop").textContent = "Stop $151.60  ·  " + (m >= NVDAS6.stop ? "at stop" : "$" + (NVDAS6.stop - m).toFixed(2) + " away");
         document.getElementById("nvdas6-to-target").textContent = "Take-profit $147.00  ·  " + (m <= NVDAS6.target ? "at target" : "$" + (m - NVDAS6.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - NVDAS6.target) / (NVDAS6.stop - NVDAS6.target) * 100));
         document.getElementById("nvdas6-range-mark").style.left = pct + "%";
@@ -1491,7 +1491,7 @@
       }
     }
     if (!NVDAS6.closed) { pollNvdas6(); setInterval(pollNvdas6, 5000); }
-    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 128, target: 121.5, fee: 0.0434, closed: false };
+    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 124.3, target: 121.5, fee: 0.0434, closed: false };
     let spcxs7Mark = null;
     function spcxs7Pnl() { if (SPCXS7.closed) return SPCXS7.realized; return spcxs7Mark == null ? -SPCXS7.fee : (SPCXS7.entry - spcxs7Mark) * SPCXS7.size - SPCXS7.fee; }
     async function pollSpcxs7() {
@@ -1509,7 +1509,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("spcxs7-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("spcxs7-src").textContent = "Kraken SPCX perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("spcxs7-to-stop").textContent = "Stop $128.00  ·  " + (m >= SPCXS7.stop ? "at stop" : "$" + (SPCXS7.stop - m).toFixed(2) + " away");
+        document.getElementById("spcxs7-to-stop").textContent = "Stop $124.30  ·  " + (m >= SPCXS7.stop ? "at stop" : "$" + (SPCXS7.stop - m).toFixed(2) + " away");
         document.getElementById("spcxs7-to-target").textContent = "Take-profit $121.50  ·  " + (m <= SPCXS7.target ? "at target" : "$" + (m - SPCXS7.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - SPCXS7.target) / (SPCXS7.stop - SPCXS7.target) * 100));
         document.getElementById("spcxs7-range-mark").style.left = pct + "%";
@@ -1519,7 +1519,7 @@
       }
     }
     if (!SPCXS7.closed) { pollSpcxs7(); setInterval(pollSpcxs7, 5000); }
-    const SOLS8 = { entry: 68.81, size: 2.7, stop: 69.1, target: 67.3, fee: 0.0929, closed: false };
+    const SOLS8 = { entry: 68.81, size: 2.7, stop: 68.8, target: 67.3, fee: 0.0929, closed: false };
     let sols8Mark = null;
     function sols8Pnl() { if (SOLS8.closed) return SOLS8.realized; return sols8Mark == null ? -SOLS8.fee : (SOLS8.entry - sols8Mark) * SOLS8.size - SOLS8.fee; }
     async function pollSols8() {
@@ -1537,7 +1537,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("sols8-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("sols8-src").textContent = "Kraken SOL perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("sols8-to-stop").textContent = "Stop $69.10  ·  " + (m >= SOLS8.stop ? "at stop" : "$" + (SOLS8.stop - m).toFixed(2) + " away");
+        document.getElementById("sols8-to-stop").textContent = "Stop $68.80  ·  " + (m >= SOLS8.stop ? "at stop" : "$" + (SOLS8.stop - m).toFixed(2) + " away");
         document.getElementById("sols8-to-target").textContent = "Take-profit $67.30  ·  " + (m <= SOLS8.target ? "at target" : "$" + (m - SOLS8.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - SOLS8.target) / (SOLS8.stop - SOLS8.target) * 100));
         document.getElementById("sols8-range-mark").style.left = pct + "%";
