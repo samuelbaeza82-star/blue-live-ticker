@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>12:39 PM CT on Nov 24</strong>.
+          Positions are as of <strong>8:44 PM CT on Nov 24</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$233.06</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,699.30 (stop trailed $1,705, target $1,655, 12:42 AM CT Nov 24) + BTC 3x short $60,349 (stop trailed $60,400, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop trailed $155, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop $131, target $121.50, 12:39 PM CT Nov 24) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$245.10</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: BTC 3x short $60,349 (stop trailed $59,900, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop trailed $154.10, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $128, target $121.50, 12:39 PM CT Nov 24) · Nov 24 win: ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,8 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$233.06</div>
-        <div class="sub">Same account as above · $230.60 collateral · about $22.16 margin free at 12:39 PM CT Nov 24</div>
+        <div id="leverage" class="big neg">$245.10</div>
+        <div class="sub">Same account as above · $235.23 collateral · about $94 margin free at 8:44 PM CT Nov 24</div>
       </div>
     </section>
 
@@ -484,7 +484,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="spcxs7-to-target">Take-profit $121.50</span>
-        <span class="s" id="spcxs7-to-stop">Stop $131.00</span>
+        <span class="s" id="spcxs7-to-stop">Stop $128.00</span>
       </div>
     </section>
 
@@ -505,7 +505,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="nvdas6-to-target">Take-profit $147.00</span>
-        <span class="s" id="nvdas6-to-stop">Stop $155.00</span>
+        <span class="s" id="nvdas6-to-stop">Stop $154.10</span>
       </div>
     </section>
 
@@ -526,16 +526,16 @@
       </div>
       <div class="range-labels">
         <span class="t" id="btcs5-to-target">Take-profit $59,000</span>
-        <span class="s" id="btcs5-to-stop">Stop $60,400</span>
+        <span class="s" id="btcs5-to-stop">Stop $59,900</span>
       </div>
     </section>
 
     <section class="card trade-card" id="card-eths3">
       <div class="trade-head">
-        <div class="label">Open trade · ETH 3x short · filled $1,699.30 at 12:42 AM CT Nov 24</div>
-        <div class="sub" id="eths3-src">Waiting for ETH mark…</div>
+        <div class="label">Closed trade · ETH 3x short · $1,699.30 → target $1,652.26 hit (8:05 PM CT Nov 24)</div>
+        <div class="sub" id="eths3-src">Closed at target · net after fees</div>
       </div>
-      <div id="eths3-pnl" class="pnl flat">$0.00</div>
+      <div id="eths3-pnl" class="pnl pos">+$4.54</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$1,699.30</b></span>
@@ -1364,7 +1364,7 @@
       }
     }
     if (!ETHS2.closed) { pollEths2(); setInterval(pollEths2, 5000); }
-    const ETHS3 = { entry: 1699.30, size: 0.1, stop: 1705, target: 1655, fee: 0.085, closed: false };
+    const ETHS3 = { entry: 1699.30, size: 0.1, stop: 1705, target: 1655, fee: 0.085, closed: true, exit: 1652.26, realized: 4.54 };
     let eths3Mark = null;
     function eths3Pnl() { if (ETHS3.closed) return ETHS3.realized; return eths3Mark == null ? -ETHS3.fee : (ETHS3.entry - eths3Mark) * ETHS3.size - ETHS3.fee; }
     async function pollEths3() {
@@ -1392,7 +1392,8 @@
       }
     }
     if (!ETHS3.closed) { pollEths3(); setInterval(pollEths3, 5000); }
-    const BTCS5 = { entry: 60349, size: 0.0045, stop: 60400, target: 59000, fee: 0.1358, closed: false };
+    else { document.getElementById("eths3-mark").textContent = "$1,652.26 exit"; document.getElementById("eths3-src").textContent = "Closed at target · net after fees"; document.getElementById("eths3-to-target").textContent = "Take-profit $1,655 · hit"; }
+    const BTCS5 = { entry: 60349, size: 0.0045, stop: 59900, target: 59000, fee: 0.1358, closed: false };
     let btcs5Mark = null;
     function btcs5Pnl() { if (BTCS5.closed) return BTCS5.realized; return btcs5Mark == null ? -BTCS5.fee : (BTCS5.entry - btcs5Mark) * BTCS5.size - BTCS5.fee; }
     async function pollBtcs5() {
@@ -1410,7 +1411,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("btcs5-mark").textContent = "$" + m.toFixed(1);
         document.getElementById("btcs5-src").textContent = "Kraken BTC perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("btcs5-to-stop").textContent = "Stop $60,400  ·  " + (m >= BTCS5.stop ? "at stop" : "$" + (BTCS5.stop - m).toFixed(2) + " away");
+        document.getElementById("btcs5-to-stop").textContent = "Stop $59,900  ·  " + (m >= BTCS5.stop ? "at stop" : "$" + (BTCS5.stop - m).toFixed(2) + " away");
         document.getElementById("btcs5-to-target").textContent = "Take-profit $59,000  ·  " + (m <= BTCS5.target ? "at target" : "$" + (m - BTCS5.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - BTCS5.target) / (BTCS5.stop - BTCS5.target) * 100));
         document.getElementById("btcs5-range-mark").style.left = pct + "%";
@@ -1420,7 +1421,7 @@
       }
     }
     if (!BTCS5.closed) { pollBtcs5(); setInterval(pollBtcs5, 5000); }
-    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 155, target: 147, fee: 0.0524, closed: false };
+    const NVDAS6 = { entry: 154.13, size: 0.68, stop: 154.1, target: 147, fee: 0.0524, closed: false };
     let nvdas6Mark = null;
     function nvdas6Pnl() { if (NVDAS6.closed) return NVDAS6.realized; return nvdas6Mark == null ? -NVDAS6.fee : (NVDAS6.entry - nvdas6Mark) * NVDAS6.size - NVDAS6.fee; }
     async function pollNvdas6() {
@@ -1438,7 +1439,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("nvdas6-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("nvdas6-src").textContent = "Kraken NVDA perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("nvdas6-to-stop").textContent = "Stop $155.00  ·  " + (m >= NVDAS6.stop ? "at stop" : "$" + (NVDAS6.stop - m).toFixed(2) + " away");
+        document.getElementById("nvdas6-to-stop").textContent = "Stop $154.10  ·  " + (m >= NVDAS6.stop ? "at stop" : "$" + (NVDAS6.stop - m).toFixed(2) + " away");
         document.getElementById("nvdas6-to-target").textContent = "Take-profit $147.00  ·  " + (m <= NVDAS6.target ? "at target" : "$" + (m - NVDAS6.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - NVDAS6.target) / (NVDAS6.stop - NVDAS6.target) * 100));
         document.getElementById("nvdas6-range-mark").style.left = pct + "%";
@@ -1448,7 +1449,7 @@
       }
     }
     if (!NVDAS6.closed) { pollNvdas6(); setInterval(pollNvdas6, 5000); }
-    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 131, target: 121.5, fee: 0.0434, closed: false };
+    const SPCXS7 = { entry: 127.52, size: 0.68, stop: 128, target: 121.5, fee: 0.0434, closed: false };
     let spcxs7Mark = null;
     function spcxs7Pnl() { if (SPCXS7.closed) return SPCXS7.realized; return spcxs7Mark == null ? -SPCXS7.fee : (SPCXS7.entry - spcxs7Mark) * SPCXS7.size - SPCXS7.fee; }
     async function pollSpcxs7() {
@@ -1466,7 +1467,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("spcxs7-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("spcxs7-src").textContent = "Kraken SPCX perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("spcxs7-to-stop").textContent = "Stop $131.00  ·  " + (m >= SPCXS7.stop ? "at stop" : "$" + (SPCXS7.stop - m).toFixed(2) + " away");
+        document.getElementById("spcxs7-to-stop").textContent = "Stop $128.00  ·  " + (m >= SPCXS7.stop ? "at stop" : "$" + (SPCXS7.stop - m).toFixed(2) + " away");
         document.getElementById("spcxs7-to-target").textContent = "Take-profit $121.50  ·  " + (m <= SPCXS7.target ? "at target" : "$" + (m - SPCXS7.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - SPCXS7.target) / (SPCXS7.stop - SPCXS7.target) * 100));
         document.getElementById("spcxs7-range-mark").style.left = pct + "%";
