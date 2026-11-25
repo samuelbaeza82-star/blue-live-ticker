@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>8:44 PM CT on Nov 24</strong>.
+          Positions are as of <strong>10:41 PM CT on Nov 24</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$245.10</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: BTC 3x short $60,349 (stop trailed $59,900, target $59,000, 2:45 AM CT Nov 24) + NVDA 3x short $154.13 (stop trailed $154.10, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $128, target $121.50, 12:39 PM CT Nov 24) · Nov 24 win: ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$245.15</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: NVDA 3x short $154.13 (stop trailed $154.10, target $147, 8:39 AM CT Nov 24) + SPCX 3x short $127.52 (stop trailed $128, target $121.50, 12:39 PM CT Nov 24) + SOL 3x short $68.81 (stop $69.65, target $67.30, 10:40 PM CT Nov 24) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,29 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$245.10</div>
-        <div class="sub">Same account as above · $235.23 collateral · about $94 margin free at 8:44 PM CT Nov 24</div>
+        <div id="leverage" class="big neg">$245.15</div>
+        <div class="sub">Same account as above · $241.08 collateral · about $119 margin free at 10:41 PM CT Nov 24</div>
+      </div>
+    </section>
+
+    <section class="card trade-card" id="card-sols8">
+      <div class="trade-head">
+        <div class="label">Open trade · SOL 3x short · filled $68.81 at 10:40 PM CT Nov 24</div>
+        <div class="sub" id="sols8-src">Waiting for SOL mark…</div>
+      </div>
+      <div id="sols8-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$68.81</b></span>
+        <span>Size <b>2.7 SOL</b></span>
+        <span>Mark <b id="sols8-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="sols8-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="sols8-to-target">Take-profit $67.30</span>
+        <span class="s" id="sols8-to-stop">Stop $69.65</span>
       </div>
     </section>
 
@@ -511,10 +532,10 @@
 
     <section class="card trade-card" id="card-btcs5">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 3x short · filled $60,349 at 2:45 AM CT Nov 24</div>
+        <div class="label">Closed trade · BTC 3x short · $60,349 → target $58,999.54 hit (10:41 PM CT Nov 24)</div>
         <div class="sub" id="btcs5-src">Waiting for BTC mark…</div>
       </div>
-      <div id="btcs5-pnl" class="pnl flat">$0.00</div>
+      <div id="btcs5-pnl" class="pnl pos">+$5.80</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$60,349</b></span>
@@ -526,7 +547,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="btcs5-to-target">Take-profit $59,000</span>
-        <span class="s" id="btcs5-to-stop">Stop $59,900</span>
+        <span class="s" id="btcs5-to-stop">Stop $59,800</span>
       </div>
     </section>
 
@@ -1393,7 +1414,7 @@
     }
     if (!ETHS3.closed) { pollEths3(); setInterval(pollEths3, 5000); }
     else { document.getElementById("eths3-mark").textContent = "$1,652.26 exit"; document.getElementById("eths3-src").textContent = "Closed at target · net after fees"; document.getElementById("eths3-to-target").textContent = "Take-profit $1,655 · hit"; }
-    const BTCS5 = { entry: 60349, size: 0.0045, stop: 59900, target: 59000, fee: 0.1358, closed: false };
+    const BTCS5 = { entry: 60349, size: 0.0045, stop: 59800, target: 59000, fee: 0.1358, closed: true, exit: 58999.54, realized: 5.80 };
     let btcs5Mark = null;
     function btcs5Pnl() { if (BTCS5.closed) return BTCS5.realized; return btcs5Mark == null ? -BTCS5.fee : (BTCS5.entry - btcs5Mark) * BTCS5.size - BTCS5.fee; }
     async function pollBtcs5() {
@@ -1411,7 +1432,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("btcs5-mark").textContent = "$" + m.toFixed(1);
         document.getElementById("btcs5-src").textContent = "Kraken BTC perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("btcs5-to-stop").textContent = "Stop $59,900  ·  " + (m >= BTCS5.stop ? "at stop" : "$" + (BTCS5.stop - m).toFixed(2) + " away");
+        document.getElementById("btcs5-to-stop").textContent = "Stop $59,800  ·  " + (m >= BTCS5.stop ? "at stop" : "$" + (BTCS5.stop - m).toFixed(2) + " away");
         document.getElementById("btcs5-to-target").textContent = "Take-profit $59,000  ·  " + (m <= BTCS5.target ? "at target" : "$" + (m - BTCS5.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - BTCS5.target) / (BTCS5.stop - BTCS5.target) * 100));
         document.getElementById("btcs5-range-mark").style.left = pct + "%";
@@ -1477,6 +1498,34 @@
       }
     }
     if (!SPCXS7.closed) { pollSpcxs7(); setInterval(pollSpcxs7, 5000); }
+    const SOLS8 = { entry: 68.81, size: 2.7, stop: 69.65, target: 67.3, fee: 0.0929, closed: false };
+    let sols8Mark = null;
+    function sols8Pnl() { if (SOLS8.closed) return SOLS8.realized; return sols8Mark == null ? -SOLS8.fee : (SOLS8.entry - sols8Mark) * SOLS8.size - SOLS8.fee; }
+    async function pollSols8() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_SOLUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        sols8Mark = m;
+        const pnl = sols8Pnl();
+        const el = document.getElementById("sols8-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("sols8-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("sols8-src").textContent = "Kraken SOL perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("sols8-to-stop").textContent = "Stop $69.65  ·  " + (m >= SOLS8.stop ? "at stop" : "$" + (SOLS8.stop - m).toFixed(2) + " away");
+        document.getElementById("sols8-to-target").textContent = "Take-profit $67.30  ·  " + (m <= SOLS8.target ? "at target" : "$" + (m - SOLS8.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - SOLS8.target) / (SOLS8.stop - SOLS8.target) * 100));
+        document.getElementById("sols8-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("sols8-src").textContent = "SOL mark unavailable, retrying…";
+      }
+    }
+    if (!SOLS8.closed) { pollSols8(); setInterval(pollSols8, 5000); }
 
     const SOLS2 = { entry: 71.0, size: 0.5, stop: 72.0, target: 68.5, fee: 0.01775, closed: true, exit: 72.18, realized: -0.62 };
     let sols2Mark = null;
@@ -1819,7 +1868,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -1841,9 +1890,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
