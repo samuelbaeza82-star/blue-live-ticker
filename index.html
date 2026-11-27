@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>8:39 PM CT on Nov 26</strong>.
+          Positions are as of <strong>6:43 AM CT on Nov 27</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$218.68</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · no open positions (ETH and BTC 3x shorts stopped out 8:39 PM CT Nov 26 as crypto pushed higher) · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$218.42</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,721.60 (stop $1,736, target $1,690) + BTC 3x short $61,506 (stop $61,720, target $61,000), both 6:43 AM CT Nov 27 · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,8 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$218.68</div>
-        <div class="sub">Same account as above · $218.68 collateral · all $218.68 free (no positions) at 8:39 PM CT Nov 26</div>
+        <div id="leverage" class="big neg">$218.42</div>
+        <div class="sub">Same account as above · $218.42 collateral · about $47 margin free at 6:43 AM CT Nov 27</div>
       </div>
     </section>
 
@@ -509,6 +509,46 @@
       </div>
     </section>
 
+    <section class="card trade-card" id="card-eths17">
+      <div class="trade-head">
+        <div class="label">Open trade · ETH 3x short · $1,721.60 (6:43 AM CT Nov 27)</div>
+        <div class="sub" id="eths17-src">Waiting for ETH mark…</div>
+      </div>
+      <div id="eths17-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$1,721.60</b></span>
+        <span>Size <b>0.12 ETH</b></span>
+        <span>Mark <b id="eths17-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="eths17-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="eths17-to-target">Take-profit $1,690</span>
+        <span class="s" id="eths17-to-stop">Stop $1,736</span>
+      </div>
+    </section>
+    <section class="card trade-card" id="card-btcs18">
+      <div class="trade-head">
+        <div class="label">Open trade · BTC 3x short · $61,506 (6:43 AM CT Nov 27)</div>
+        <div class="sub" id="btcs18-src">Waiting for BTC mark…</div>
+      </div>
+      <div id="btcs18-pnl" class="pnl flat">$0.00</div>
+      <div class="sub">Live, after entry fee</div>
+      <div class="meta">
+        <span>Entry <b>$61,506</b></span>
+        <span>Size <b>0.005 BTC</b></span>
+        <span>Mark <b id="btcs18-mark">—</b></span>
+      </div>
+      <div class="range" aria-hidden="true">
+        <div id="btcs18-range-mark" class="range-mark" style="left: 50%"></div>
+      </div>
+      <div class="range-labels">
+        <span class="t" id="btcs18-to-target">Take-profit $61,000</span>
+        <span class="s" id="btcs18-to-stop">Stop $61,720</span>
+      </div>
+    </section>
     <section class="card trade-card" id="card-eths15">
       <div class="trade-head">
         <div class="label">Closed trade · ETH 3x short · $1,683.80 → stopped $1,729.97 (8:39 PM CT Nov 26)</div>
@@ -1775,6 +1815,62 @@
       }
     }
     if (!AMZNS11.closed) { pollAmzns11(); setInterval(pollAmzns11, 5000); }
+    const ETHS17 = { entry: 1721.6, size: 0.12, stop: 1736, target: 1690, fee: 0.1033, closed: false };
+    let eths17Mark = null;
+    function eths17Pnl() { if (ETHS17.closed) return ETHS17.realized; return eths17Mark == null ? -ETHS17.fee : (ETHS17.entry - eths17Mark) * ETHS17.size - ETHS17.fee; }
+    async function pollEths17() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_ETHUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        eths17Mark = m;
+        const pnl = eths17Pnl();
+        const el = document.getElementById("eths17-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("eths17-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("eths17-src").textContent = "Kraken ETH perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("eths17-to-stop").textContent = "Stop $1,736  ·  " + (m >= ETHS17.stop ? "at stop" : "$" + (ETHS17.stop - m).toFixed(2) + " away");
+        document.getElementById("eths17-to-target").textContent = "Take-profit $1,690  ·  " + (m <= ETHS17.target ? "at target" : "$" + (m - ETHS17.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - ETHS17.target) / (ETHS17.stop - ETHS17.target) * 100));
+        document.getElementById("eths17-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("eths17-src").textContent = "ETH mark unavailable, retrying…";
+      }
+    }
+    if (!ETHS17.closed) { pollEths17(); setInterval(pollEths17, 5000); }
+    const BTCS18 = { entry: 61506, size: 0.005, stop: 61720, target: 61000, fee: 0.1538, closed: false };
+    let btcs18Mark = null;
+    function btcs18Pnl() { if (BTCS18.closed) return BTCS18.realized; return btcs18Mark == null ? -BTCS18.fee : (BTCS18.entry - btcs18Mark) * BTCS18.size - BTCS18.fee; }
+    async function pollBtcs18() {
+      try {
+        const r = await fetch("https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD?_=" + Date.now(), { cache: "no-store" });
+        const j = await r.json();
+        const t = j.ticker || (j.tickers && j.tickers[0]);
+        const m = Number(t.markPrice || t.last);
+        if (!isFinite(m)) return;
+        btcs18Mark = m;
+        const pnl = btcs18Pnl();
+        const el = document.getElementById("btcs18-pnl");
+        el.textContent = (pnl >= 0 ? "+$" : "-$") + Math.abs(pnl).toFixed(2);
+        el.classList.remove("pos", "neg", "flat");
+        el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
+        document.getElementById("btcs18-mark").textContent = "$" + m.toFixed(2);
+        document.getElementById("btcs18-src").textContent = "Kraken BTC perpetual mark · " + new Date().toLocaleTimeString();
+        document.getElementById("btcs18-to-stop").textContent = "Stop $61,720  ·  " + (m >= BTCS18.stop ? "at stop" : "$" + (BTCS18.stop - m).toFixed(2) + " away");
+        document.getElementById("btcs18-to-target").textContent = "Take-profit $61,000  ·  " + (m <= BTCS18.target ? "at target" : "$" + (m - BTCS18.target).toFixed(2) + " to go");
+        const pct = Math.max(0, Math.min(100, (m - BTCS18.target) / (BTCS18.stop - BTCS18.target) * 100));
+        document.getElementById("btcs18-range-mark").style.left = pct + "%";
+        try { updatePnL(); } catch (e) {}
+      } catch (e) {
+        document.getElementById("btcs18-src").textContent = "BTC mark unavailable, retrying…";
+      }
+    }
+    if (!BTCS18.closed) { pollBtcs18(); setInterval(pollBtcs18, 5000); }
     const ETHS15 = { entry: 1683.8, size: 0.08, stop: 1712, target: 1636, fee: 0.0674, closed: true, exit: 1729.97, realized: -3.76 };
     let eths15Mark = null;
     function eths15Pnl() { if (ETHS15.closed) return ETHS15.realized; return eths15Mark == null ? -ETHS15.fee : (ETHS15.entry - eths15Mark) * ETHS15.size - ETHS15.fee; }
@@ -2256,7 +2352,7 @@
       }
 
       const combinedEl = document.getElementById("combined");
-      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl();
+      const combined = POSITIONS.leverageStart + sPnl + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl() + eths17Pnl() + btcs18Pnl();
       combinedEl.textContent = money(combined);
       combinedEl.classList.remove("pos", "neg", "flat");
       combinedEl.classList.add(signClass(combined - POSITIONS.leverageStart));
@@ -2278,9 +2374,9 @@
         pnlEl.classList.remove("pos", "neg", "flat");
         pnlEl.classList.add(signClass(rp));
         renderCashAndCombined(rp);
-        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl());
+        levEl.textContent = money(POSITIONS.leverageStart + rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl() + eths17Pnl() + btcs18Pnl());
         levEl.classList.remove("pos", "neg", "flat");
-        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl()));
+        levEl.classList.add(signClass(rp + nvdaPnl() + qqqPnl() + googlPnl() + mstrPnl() + btc2Pnl() + nvda2Pnl() + hoodPnl() + ethsPnl() + solsPnl() + btcs3Pnl() + btcs4Pnl() + eths2Pnl() + sols2Pnl() + xrpsPnl() + eths3Pnl() + btcs5Pnl() + nvdas6Pnl() + spcxs7Pnl() + sols8Pnl() + eths9Pnl() + tslas10Pnl() + amzns11Pnl() + coins12Pnl() + nvdas13Pnl() + spcxs14Pnl() + eths15Pnl() + btcs16Pnl() + eths17Pnl() + btcs18Pnl()));
         src.textContent = "Closed: stop hit, bought back at $63,351 (net incl. fees and funding)";
         if (mark != null && isFinite(mark)) markEl.textContent = formatPrice(mark);
         hit.className = "hit show stop";
