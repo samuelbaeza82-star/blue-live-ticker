@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>2:38 PM CT on Nov 27</strong>.
+          Positions are as of <strong>4:44 PM CT on Nov 27</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -453,7 +453,7 @@
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
         <div id="combined" class="big neg">$226.98</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: BTC 3x short $60,253 from 10:45 AM CT Nov 27 (stop trailed to $60,100, target $59,000) + ETH 3x short $1,664.10 from 2:38 PM CT (stop $1,680, target $1,636) · NVDA (-$1.18) and HOOD (-$0.76) shorts closed 12:42 PM CT before the weekend · earlier today ETH +$3.90, BTC +$6.56 (targets hit 8:45 AM CT) · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: BTC 3x short $60,253 from 10:45 AM CT Nov 27 (stop trailed to $60,000, target $59,000) + ETH 3x short $1,664.10 from 2:38 PM CT (stop trailed to $1,675, target $1,636) · NVDA (-$1.18) and HOOD (-$0.76) shorts closed 12:42 PM CT before the weekend · earlier today ETH +$3.90, BTC +$6.56 (targets hit 8:45 AM CT) · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -566,7 +566,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="eths22-to-target">Take-profit $1,636</span>
-        <span class="s" id="eths22-to-stop">Stop $1,680</span>
+        <span class="s" id="eths22-to-stop">Stop $1,675</span>
       </div>
     </section>
     <section class="card trade-card" id="card-btcs21">
@@ -586,7 +586,7 @@
       </div>
       <div class="range-labels">
         <span class="t" id="btcs21-to-target">Take-profit $59,000</span>
-        <span class="s" id="btcs21-to-stop">Stop $60,100</span>
+        <span class="s" id="btcs21-to-stop">Stop $60,000</span>
       </div>
     </section>
     <section class="card trade-card" id="card-eths17">
@@ -2007,7 +2007,7 @@
       }
     }
     if (!HOODS20.closed) { pollHoods20(); setInterval(pollHoods20, 5000); }
-    const BTCS21 = { entry: 60253, size: 0.003, stop: 60100, target: 59000, fee: 0.0904, closed: false };
+    const BTCS21 = { entry: 60253, size: 0.003, stop: 60000, target: 59000, fee: 0.0904, closed: false };
     let btcs21Mark = null;
     function btcs21Pnl() { if (BTCS21.closed) return BTCS21.realized; return btcs21Mark == null ? -BTCS21.fee : (BTCS21.entry - btcs21Mark) * BTCS21.size - BTCS21.fee; }
     async function pollBtcs21() {
@@ -2025,7 +2025,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("btcs21-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("btcs21-src").textContent = "Kraken BTC perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("btcs21-to-stop").textContent = "Stop $60,100  ·  " + (m >= BTCS21.stop ? "at stop" : "$" + (BTCS21.stop - m).toFixed(2) + " away");
+        document.getElementById("btcs21-to-stop").textContent = "Stop $60,000  ·  " + (m >= BTCS21.stop ? "at stop" : "$" + (BTCS21.stop - m).toFixed(2) + " away");
         document.getElementById("btcs21-to-target").textContent = "Take-profit $59,000  ·  " + (m <= BTCS21.target ? "at target" : "$" + (m - BTCS21.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - BTCS21.target) / (BTCS21.stop - BTCS21.target) * 100));
         document.getElementById("btcs21-range-mark").style.left = pct + "%";
@@ -2035,7 +2035,7 @@
       }
     }
     if (!BTCS21.closed) { pollBtcs21(); setInterval(pollBtcs21, 5000); }
-    const ETHS22 = { entry: 1664.1, size: 0.15, stop: 1680, target: 1636, fee: 0.1248, closed: false };
+    const ETHS22 = { entry: 1664.1, size: 0.15, stop: 1675, target: 1636, fee: 0.1248, closed: false };
     let eths22Mark = null;
     function eths22Pnl() { if (ETHS22.closed) return ETHS22.realized; return eths22Mark == null ? -ETHS22.fee : (ETHS22.entry - eths22Mark) * ETHS22.size - ETHS22.fee; }
     async function pollEths22() {
@@ -2053,7 +2053,7 @@
         el.classList.add(pnl > 0 ? "pos" : pnl < 0 ? "neg" : "flat");
         document.getElementById("eths22-mark").textContent = "$" + m.toFixed(2);
         document.getElementById("eths22-src").textContent = "Kraken ETH perpetual mark · " + new Date().toLocaleTimeString();
-        document.getElementById("eths22-to-stop").textContent = "Stop $1,680  ·  " + (m >= ETHS22.stop ? "at stop" : "$" + (ETHS22.stop - m).toFixed(2) + " away");
+        document.getElementById("eths22-to-stop").textContent = "Stop $1,675  ·  " + (m >= ETHS22.stop ? "at stop" : "$" + (ETHS22.stop - m).toFixed(2) + " away");
         document.getElementById("eths22-to-target").textContent = "Take-profit $1,636  ·  " + (m <= ETHS22.target ? "at target" : "$" + (m - ETHS22.target).toFixed(2) + " to go");
         const pct = Math.max(0, Math.min(100, (m - ETHS22.target) / (ETHS22.stop - ETHS22.target) * 100));
         document.getElementById("eths22-range-mark").style.left = pct + "%";
