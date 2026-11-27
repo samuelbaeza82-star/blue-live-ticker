@@ -427,7 +427,7 @@
       <div>
         <h1>Blue's Live Ticker</h1>
         <p class="note">
-          Positions are as of <strong>6:43 AM CT on Nov 27</strong>.
+          Positions are as of <strong>8:45 AM CT on Nov 27</strong>.
           This page streams live prices from Kraken and updates P&amp;L every tick.
           One practice account: the leverage (futures) account.
           At 9:43 PM CT Nov 21, at Blue's request, all cash ($197.08) was moved into this account.
@@ -452,8 +452,8 @@
     <section class="accounts">
       <div class="card combined" id="card-combined">
         <div class="label">Leverage account equity</div>
-        <div id="combined" class="big neg">$218.42</div>
-        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · open: ETH 3x short $1,721.60 (stop $1,736, target $1,690) + BTC 3x short $61,506 (stop $61,720, target $61,000), both 6:43 AM CT Nov 27 · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
+        <div id="combined" class="big neg">$229.13</div>
+        <div class="sub">$247.08 start after $197.08 cash moved in at 9:43 PM CT Nov 21 (original $50 + deposit) · no open positions (ETH and BTC 3x shorts both hit target 8:45 AM CT Nov 27: ETH +$3.90, BTC +$6.56) · Nov 26 losses: ETH -$3.76, BTC -$3.65 · Nov 25: all 6 shorts stopped out 12:46 PM CT as stocks and crypto bounced · Nov 25 losses: SPCX -$7.47, COIN -$5.66, NVDA -$5.35, TSLA -$4.81, AMZN -$3.47, ETH -$3.46 · Nov 25 wins: SOL short target hit $66.52 (+$5.99, 8:40 AM CT) · NVDA short target hit $146.40 (+$5.16, 6:55 AM CT) · SPCX short target hit $121.43 (+$4.05, 6:55 AM CT) · Nov 24 wins: BTC short target hit $58,999.54 (+$5.80, 10:41 PM CT) · ETH short target hit $1,652.26 (+$4.54, 8:05 PM CT) · Nov 23 losses: XRP short closed $0.9993 (-$12.71), ETH short stopped $1,805 (-$5.34) · SOL short stopped $72.18 (2:36 AM CT Nov 23) · BTC short stopped $61,263 (10:41 AM CT Nov 22)</div>
       </div>
       <div class="card" id="card-cash">
         <div class="label">Cash account (closed)</div>
@@ -462,8 +462,8 @@
       </div>
       <div class="card" id="card-lev">
         <div class="label">Leverage account</div>
-        <div id="leverage" class="big neg">$218.42</div>
-        <div class="sub">Same account as above · $218.42 collateral · about $47 margin free at 6:43 AM CT Nov 27</div>
+        <div id="leverage" class="big neg">$229.13</div>
+        <div class="sub">Same account as above · $229.13 collateral · all $229.13 free (no positions) at 8:45 AM CT Nov 27</div>
       </div>
     </section>
 
@@ -511,10 +511,10 @@
 
     <section class="card trade-card" id="card-eths17">
       <div class="trade-head">
-        <div class="label">Open trade · ETH 3x short · $1,721.60 (6:43 AM CT Nov 27)</div>
+        <div class="label">Closed trade · ETH 3x short · $1,721.60 → target hit $1,687.43 (8:45 AM CT Nov 27)</div>
         <div class="sub" id="eths17-src">Waiting for ETH mark…</div>
       </div>
-      <div id="eths17-pnl" class="pnl flat">$0.00</div>
+      <div id="eths17-pnl" class="pnl pos">+$3.90</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$1,721.60</b></span>
@@ -531,10 +531,10 @@
     </section>
     <section class="card trade-card" id="card-btcs18">
       <div class="trade-head">
-        <div class="label">Open trade · BTC 3x short · $61,506 (6:43 AM CT Nov 27)</div>
+        <div class="label">Closed trade · BTC 3x short · $61,506 → target hit $60,133.63 (8:45 AM CT Nov 27)</div>
         <div class="sub" id="btcs18-src">Waiting for BTC mark…</div>
       </div>
-      <div id="btcs18-pnl" class="pnl flat">$0.00</div>
+      <div id="btcs18-pnl" class="pnl pos">+$6.56</div>
       <div class="sub">Live, after entry fee</div>
       <div class="meta">
         <span>Entry <b>$61,506</b></span>
@@ -1815,7 +1815,7 @@
       }
     }
     if (!AMZNS11.closed) { pollAmzns11(); setInterval(pollAmzns11, 5000); }
-    const ETHS17 = { entry: 1721.6, size: 0.12, stop: 1736, target: 1690, fee: 0.1033, closed: false };
+    const ETHS17 = { entry: 1721.6, size: 0.12, stop: 1736, target: 1690, fee: 0.1033, closed: true, exit: 1687.43, realized: 3.90 };
     let eths17Mark = null;
     function eths17Pnl() { if (ETHS17.closed) return ETHS17.realized; return eths17Mark == null ? -ETHS17.fee : (ETHS17.entry - eths17Mark) * ETHS17.size - ETHS17.fee; }
     async function pollEths17() {
@@ -1843,7 +1843,7 @@
       }
     }
     if (!ETHS17.closed) { pollEths17(); setInterval(pollEths17, 5000); }
-    const BTCS18 = { entry: 61506, size: 0.005, stop: 61720, target: 61000, fee: 0.1538, closed: false };
+    const BTCS18 = { entry: 61506, size: 0.005, stop: 61720, target: 61000, fee: 0.1538, closed: true, exit: 60133.63, realized: 6.56 };
     let btcs18Mark = null;
     function btcs18Pnl() { if (BTCS18.closed) return BTCS18.realized; return btcs18Mark == null ? -BTCS18.fee : (BTCS18.entry - btcs18Mark) * BTCS18.size - BTCS18.fee; }
     async function pollBtcs18() {
